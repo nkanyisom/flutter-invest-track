@@ -1,0 +1,17 @@
+name: authentication_repository
+description: Dart package which manages the authentication domain.
+publish_to: none
+version: 1.0.0
+repository: https://github.com/Turskyi/flutter_life_coaching_ai
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  models:
+    path: ../../models
+  shared_preferences: ^2.3.2
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: ^1.25.8
