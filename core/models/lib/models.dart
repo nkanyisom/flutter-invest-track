@@ -9,6 +9,7 @@ export 'src/abstract/logout_response.dart';
 export 'src/abstract/register_response.dart';
 export 'src/abstract/verification.dart';
 export 'src/code.dart';
+export 'src/currency.dart';
 export 'src/email_address.dart';
 export 'src/enums/feedback_rating.dart';
 export 'src/enums/feedback_type.dart';

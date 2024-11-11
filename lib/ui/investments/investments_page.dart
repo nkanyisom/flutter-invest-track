@@ -8,7 +8,8 @@ import 'package:investtrack/application_services/blocs/authentication/bloc/authe
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/application_services/blocs/menu/menu_bloc.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
-import 'package:investtrack/ui/investments/add_edit_investment_dialog.dart';
+import 'package:investtrack/router/slide_page_route.dart';
+import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
 import 'package:investtrack/ui/investments/investment_widget.dart';
 import 'package:investtrack/ui/investments/shimmer_investment.dart';
 import 'package:investtrack/ui/menu/app_drawer.dart';
@@ -125,13 +126,16 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => BlocProvider<InvestmentsBloc>.value(
-            value: context.read<InvestmentsBloc>(),
-            child: const AddEditInvestmentDialog(),
-          ),
-        ),
+        onPressed: () {
+          Navigator.of(context).push(
+            SlidePageRoute(
+              page: BlocProvider<InvestmentsBloc>.value(
+                value: context.read<InvestmentsBloc>(),
+                child: const AddEditInvestmentPage(),
+              ),
+            ),
+          );
+        },
         tooltip: 'Add Investment.',
         child: const Icon(Icons.add),
       ),

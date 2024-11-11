@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
-import 'package:investtrack/ui/investments/add_edit_investment_dialog.dart';
+import 'package:investtrack/router/slide_page_route.dart';
+import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
 import 'package:models/models.dart';
 
 class InvestmentCard extends StatelessWidget {
@@ -28,13 +29,16 @@ class InvestmentCard extends StatelessWidget {
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        onTap: () => showDialog(
-          context: context,
-          builder: (_) => BlocProvider<InvestmentsBloc>.value(
-            value: context.read<InvestmentsBloc>(),
-            child: AddEditInvestmentDialog(investment: investment),
-          ),
-        ),
+        onTap: () {
+          Navigator.of(context).push(
+            SlidePageRoute(
+              page: BlocProvider<InvestmentsBloc>.value(
+                value: context.read<InvestmentsBloc>(),
+                child: AddEditInvestmentPage(investment: investment),
+              ),
+            ),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

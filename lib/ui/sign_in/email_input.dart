@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/sign_in/bloc/sign_in_bloc.dart';
-import 'package:investtrack/res/constants.dart' as constants;
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:models/models.dart';
 
 class EmailInput extends StatelessWidget {

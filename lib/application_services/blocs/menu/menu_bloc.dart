@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:investtrack/domain_services/settings_repository.dart';
-import 'package:investtrack/res/constants.dart' as constants;
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:models/models.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';

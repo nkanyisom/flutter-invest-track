@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:investtrack/application_services/blocs/menu/menu_bloc.dart';
 import 'package:investtrack/ui/app/app_view.dart';
+import 'package:nested/nested.dart';
 import 'package:user_repository/user_repository.dart';
 
 /// We are injecting a single instance of the [AuthenticationRepository] and
@@ -40,13 +41,14 @@ class _AppState extends State<App> {
     return RepositoryProvider<AuthenticationRepository>.value(
       value: widget.authenticationRepository,
       child: MultiBlocProvider(
-        providers: [
+        providers: <SingleChildWidget>[
           BlocProvider<AuthenticationBloc>(
-            // By default, BlocProvider is lazy and does not call create until the
-            // first time the Bloc is accessed. Since AuthenticationBloc should
-            // always subscribe to the AuthenticationStatus stream immediately (via
-            // the AuthenticationSubscriptionRequested event), we can explicitly
-            // opt out of this behavior by setting `lazy: false`.
+            // By default, BlocProvider is lazy and does not call create until
+            // the first time the Bloc is accessed. Since AuthenticationBloc
+            // should always subscribe to the AuthenticationStatus stream
+            // immediately (via the AuthenticationSubscriptionRequested event),
+            // we can explicitly opt out of this behavior by setting `lazy:
+            // false`.
             lazy: false,
             create: (_) => widget.authenticationBloc
               ..add(const AuthenticationSubscriptionRequested()),

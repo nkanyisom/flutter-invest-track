@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:investtrack/res/constants.dart' as constants;
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/router/routes.dart' as routes;
 import 'package:investtrack/ui/investments/investments_page.dart';
