@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
+import 'package:investtrack/router/app_route.dart';
+import 'package:investtrack/router/slide_page_route.dart';
+import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
 import 'package:models/models.dart';
-import 'package:yahoo_finance_data_reader/yahoo_finance_data_reader.dart';
 
-//TODO: clean up this mess.
 class InvestmentPage extends StatefulWidget {
-  const InvestmentPage({required this.investment, super.key});
-
-  final Investment investment;
+  const InvestmentPage({super.key});
 
   @override
   State<InvestmentPage> createState() => _InvestmentPageState();
@@ -14,17 +15,12 @@ class InvestmentPage extends StatefulWidget {
 
 class _InvestmentPageState extends State<InvestmentPage>
     with SingleTickerProviderStateMixin {
-  bool _isLoading = true;
-  double _currentPrice = 0.0;
-  double _purchasePrice = 0.0;
-
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _fetchStockData();
     _animationController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -36,142 +32,177 @@ class _InvestmentPageState extends State<InvestmentPage>
   }
 
   @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _fetchStockData() async {
-    try {
-      final YahooFinanceResponse currentValue =
-          await const YahooFinanceDailyReader().getDailyDTOs(
-        widget.investment.ticker,
-        startDate: DateTime.now(),
-      );
-      setState(() {
-        _currentPrice = currentValue.candlesData.firstOrNull?.close ?? 0;
-      });
-      final YahooFinanceResponse purchaseValue =
-          await const YahooFinanceDailyReader().getDailyDTOs(
-        widget.investment.ticker,
-        startDate: widget.investment.purchaseDate,
-      );
-      setState(() {
-        _purchasePrice = purchaseValue.candlesData.firstOrNull?.close ?? 0;
-        _isLoading = false;
-      });
-      _animationController.forward();
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      debugPrint('Failed to fetch stock data: $e');
-    }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _animationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    final int quantity = widget.investment.quantity;
-    final double totalValueCurrent = quantity * _currentPrice;
-    final double totalValuePurchase = quantity * _purchasePrice;
-    final double gainOrLoss = totalValueCurrent - totalValuePurchase;
-    final double gainOrLossPercentage =
-        totalValuePurchase != 0 ? (gainOrLoss / totalValuePurchase) * 100 : 0;
-    final String currency = widget.investment.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.investment.ticker,     style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),),
-        actions: <Widget>[
-          if (_isLoading) const CircularProgressIndicator(),
-        ],
-      ),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  if (widget.investment.companyLogoUrl.isNotEmpty)
-                    ColoredBox(
-                      color: Colors.white,
-                      child: Image.network(
-                        widget.investment.companyLogoUrl,
-                        width: 100,
-                        height: 100,
-                      ),
+    return BlocConsumer<InvestmentsBloc, InvestmentsState>(
+      listener: (BuildContext context, InvestmentsState state) {
+        if (state is InvestmentDeleted) {
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoute.investments.name,
+          );
+        }
+      },
+      builder: (BuildContext context, InvestmentsState state) {
+        if (state is SelectedInvestmentState) {
+          final Investment investment = state.selectedInvestment;
+          final int quantity = investment.quantity;
+          double totalValueCurrent = 0;
+          double currentPrice = 0;
+          if (state is CurrentValueLoaded) {
+            currentPrice = state.currentPrice;
+          }
+          double totalValuePurchase = 0;
+          if (state is PurchaseValueLoaded) {
+            totalValuePurchase = quantity * state.purchasePrice;
+            currentPrice = state.currentPrice;
+            totalValueCurrent = quantity * state.currentPrice;
+          }
+
+          final double gainOrLoss = totalValueCurrent - totalValuePurchase;
+          final double gainOrLossPercentage = totalValuePurchase != 0
+              ? (gainOrLoss / totalValuePurchase) * 100
+              : 0;
+          final String currency = investment.currency;
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                investment.ticker,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: <Widget>[
+                if (state is ValueLoadingState)
+                  const CircularProgressIndicator(),
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _editInvestment(investment),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: state is InvestmentDeleting
+                      ? null
+                      : () => _deleteInvestment(investment),
+                ),
+              ],
+            ),
+            body: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        if (investment.companyLogoUrl.isNotEmpty)
+                          ColoredBox(
+                            color: Colors.white,
+                            child: Image.network(
+                              investment.companyLogoUrl,
+                              width: 100,
+                              height: 100,
+                            ),
+                          ),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(investment.companyName),
+                            Text(investment.type),
+                            Text(investment.stockExchange),
+                            Text(currency),
+                          ],
+                        ),
+                      ],
                     ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(widget.investment.companyName),
-                      Text(widget.investment.type),
-                      Text(widget.investment.stockExchange),
-                      Text(currency),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    if (state is ValueLoadingState)
+                      const CircularProgressIndicator()
+                    else
+                      _buildInfoRow(
+                        context,
+                        'Current Price',
+                        currentPrice.toStringAsFixed(2),
+                        Icons.monetization_on,
+                      ),
+                    _buildInfoRow(
+                      context,
+                      'Quantity',
+                      investment.quantity.toString(),
+                      Icons.confirmation_number,
+                    ),
+                    if (state is ValueLoadingState)
+                      const CircularProgressIndicator()
+                    else
+                      _buildInfoRow(
+                        context,
+                        'Total Value (Current)',
+                        totalValueCurrent.toStringAsFixed(2),
+                        Icons.attach_money,
+                      ),
+                    _buildInfoRow(
+                      context,
+                      'Purchase Date',
+                      investment.purchaseDate
+                              ?.toIso8601String()
+                              .split('T')
+                              .firstOrNull ??
+                          '',
+                      Icons.calendar_today,
+                    ),
+                    if (state is PurchaseValueLoaded)
+                      _buildInfoRow(
+                        context,
+                        'Purchase Price',
+                        state.purchasePrice.toStringAsFixed(2),
+                        Icons.price_check,
+                      )
+                    else
+                      const CircularProgressIndicator(),
+                    _buildInfoRow(
+                      context,
+                      'Total Value (Purchase)',
+                      totalValuePurchase.toStringAsFixed(2),
+                      Icons.money,
+                    ),
+                    if (state is PurchaseValueLoaded)
+                      _buildInfoRow(
+                        context,
+                        'Gain/Loss',
+                        '${gainOrLoss.toStringAsFixed(2)} '
+                            '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
+                        gainOrLoss >= 0
+                            ? Icons.trending_up
+                            : Icons.trending_down,
+                        gainOrLoss >= 0 ? Colors.green : Colors.red,
+                      )
+                    else
+                      const CircularProgressIndicator(),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              _buildInfoRow(
-                context,
-                'Current Price',
-                _currentPrice.toStringAsFixed(2),
-                Icons.monetization_on,
-              ),
-              _buildInfoRow(
-                context,
-                'Quantity',
-                widget.investment.quantity.toString(),
-                Icons.confirmation_number,
-              ),
-              _buildInfoRow(
-                context,
-                'Total Value (Current)',
-                totalValueCurrent.toStringAsFixed(2),
-                Icons.attach_money,
-              ),
-              _buildInfoRow(
-                context,
-                'Purchase Date',
-                widget.investment.purchaseDate
-                        ?.toIso8601String()
-                        .split('T')
-                        .firstOrNull ??
-                    '',
-                Icons.calendar_today,
-              ),
-              _buildInfoRow(
-                context,
-                'Purchase Price',
-                _purchasePrice.toStringAsFixed(2),
-                Icons.price_check,
-              ),
-              _buildInfoRow(
-                context,
-                'Total Value (Purchase)',
-                totalValuePurchase.toStringAsFixed(2),
-                Icons.money,
-              ),
-              _buildInfoRow(
-                context,
-                'Gain/Loss',
-                '${gainOrLoss.toStringAsFixed(2)} '
-                    '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
-                gainOrLoss >= 0 ? Icons.trending_up : Icons.trending_down,
-                gainOrLoss >= 0 ? Colors.green : Colors.red,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Widget _buildInfoRow(
@@ -209,5 +240,20 @@ class _InvestmentPageState extends State<InvestmentPage>
         ],
       ),
     );
+  }
+
+  void _editInvestment(Investment investment) {
+    Navigator.of(context).push(
+      SlidePageRoute(
+        page: BlocProvider<InvestmentsBloc>.value(
+          value: context.read<InvestmentsBloc>(),
+          child: AddEditInvestmentPage(investment: investment),
+        ),
+      ),
+    );
+  }
+
+  void _deleteInvestment(Investment investment) {
+    context.read<InvestmentsBloc>().add(DeleteInvestmentEvent(investment));
   }
 }

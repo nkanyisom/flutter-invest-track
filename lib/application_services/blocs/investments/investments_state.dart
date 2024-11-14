@@ -61,3 +61,41 @@ final class UnauthenticatedInvestmentsAccessState extends InvestmentsError {
 final class InvestmentsLoaded extends InvestmentsState {
   const InvestmentsLoaded({super.investments});
 }
+
+final class SelectedInvestmentState extends InvestmentsState {
+  const SelectedInvestmentState({
+    required this.selectedInvestment,
+    super.investments,
+  });
+
+  final Investment selectedInvestment;
+}
+
+final class ValueLoadingState extends SelectedInvestmentState {
+  const ValueLoadingState({
+    required super.selectedInvestment,
+    super.investments,
+  });
+}
+
+final class CurrentValueLoaded extends ValueLoadingState {
+  const CurrentValueLoaded({
+    required this.currentPrice,
+    required super.selectedInvestment,
+    super.investments,
+  });
+
+  final double currentPrice;
+}
+
+final class PurchaseValueLoaded extends SelectedInvestmentState {
+  const PurchaseValueLoaded({
+    required this.purchasePrice,
+    required this.currentPrice,
+    required super.selectedInvestment,
+    super.investments,
+  });
+
+  final double purchasePrice;
+  final double currentPrice;
+}

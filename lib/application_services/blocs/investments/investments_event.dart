@@ -26,3 +26,8 @@ final class DeleteInvestmentEvent extends InvestmentsEvent {
 
   final Investment investment;
 }
+
+final class LoadInvestment extends InvestmentsEvent {
+  const LoadInvestment(this.investment);
+  final Investment investment;
+}

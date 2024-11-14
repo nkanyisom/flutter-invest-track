@@ -48,7 +48,7 @@ dependencies:
   injectable: ^2.5.0
   #  cannot upgrade due to conflicts
   injectable_generator: ^2.6.2
-  intl: ^0.19.0
+  intl: any
   json_annotation: ^4.9.0
   meta: any
   mockito: ^5.4.4
@@ -58,7 +58,7 @@ dependencies:
   package_info_plus: ^8.1.1
   path_provider: ^2.1.5
   retrofit: ^4.4.1
-  retrofit_generator: ^9.1.4
+  retrofit_generator: ^9.1.5
   shared_preferences: ^2.3.3
   shimmer: ^3.0.0
   url_launcher: ^6.3.1

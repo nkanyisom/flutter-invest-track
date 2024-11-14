@@ -328,7 +328,9 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
               ? 'Select Date'
               : DateFormat.yMMMd().add_jm().format(selectedDate),
           style: TextStyle(
-            color: selectedDate == null ? Colors.grey : Colors.black,
+            color: selectedDate == null
+                ? Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6)
+                : Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ),

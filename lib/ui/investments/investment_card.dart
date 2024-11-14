@@ -33,8 +33,9 @@ class InvestmentCard extends StatelessWidget {
           Navigator.of(context).push(
             SlidePageRoute(
               page: BlocProvider<InvestmentsBloc>.value(
-                value: context.read<InvestmentsBloc>(),
-                child: InvestmentPage(investment: investment),
+                value: context.read<InvestmentsBloc>()
+                  ..add(LoadInvestment(investment)),
+                child: const InvestmentPage(),
               ),
             ),
           );
