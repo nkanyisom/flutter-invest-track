@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/router/slide_page_route.dart';
-import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
+import 'package:investtrack/ui/investments/investment_page.dart';
 import 'package:models/models.dart';
 
 class InvestmentCard extends StatelessWidget {
@@ -34,7 +34,7 @@ class InvestmentCard extends StatelessWidget {
             SlidePageRoute(
               page: BlocProvider<InvestmentsBloc>.value(
                 value: context.read<InvestmentsBloc>(),
-                child: AddEditInvestmentPage(investment: investment),
+                child: InvestmentPage(investment: investment),
               ),
             ),
           );
@@ -49,7 +49,7 @@ class InvestmentCard extends StatelessWidget {
                   CircleAvatar(
                     backgroundColor: Colors.white,
                     backgroundImage: NetworkImage(
-                      investment.companyLogoUrl ?? '',
+                      investment.companyLogoUrl,
                     ),
                     radius: 24,
                   ),

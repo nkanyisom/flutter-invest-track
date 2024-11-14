@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
-import 'package:meta/meta.dart';
 import 'package:models/models.dart';
 
 part 'investments_event.dart';
@@ -28,8 +28,10 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
             await _investmentsRepository.getInvestments(
           userId: userId,
         );
+
         emit(InvestmentsLoaded(investments: investments));
-      } catch (error) {
+      } catch (error, stackTrace) {
+        debugPrint('Stacktrace for an error in $runtimeType: $stackTrace');
         emit(InvestmentsError(error: error.toString()));
       }
     });

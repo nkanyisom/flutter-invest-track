@@ -195,7 +195,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
 
   Future<void> _onSubmit() async {
     final FormState? formState = _formKey.currentState;
-    if (formState != null && formState.validate()) {
+    if (_purchaseDate != null && formState != null && formState.validate()) {
       setState(() => _isSubmitting = true);
       final Investment? investment = widget.investment;
       if (investment != null) {
@@ -216,7 +216,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
             );
       } else {
         // Collect form data and create the investment object.
-        final Investment newInvestment = Investment.create(
+        final Investment newInvestment = Investment.base(
           ticker: _tickerController.text,
           companyName: _companyNameController.text,
           companyLogoUrl: _companyLogoUrlController.text,
@@ -224,7 +224,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
           stockExchange: _stockExchange ?? '',
           currency: _currency ?? '',
           quantity: int.parse(_quantityController.text),
-          purchaseDate: _purchaseDate,
+          purchaseDate: _purchaseDate!,
           description: _descriptionController.text,
         );
 
@@ -237,6 +237,8 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
       setState(() => _isSubmitting = false);
       // Close the screen.
       Navigator.of(context).pop(true);
+    } else {
+      debugPrint('We should not be here, _purchaseDate should not be null.');
     }
   }
 
@@ -256,8 +258,9 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
       ),
       keyboardType: keyboardType,
       maxLines: maxLines,
-      validator: (String? value) =>
-          value == null || value.isEmpty ? 'Please enter $label.' : null,
+      validator: (String? value) {
+        return value == null || value.isEmpty ? 'Please enter $label.' : null;
+      },
     );
   }
 

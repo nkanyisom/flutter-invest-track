@@ -8,18 +8,18 @@ class Investment {
   const Investment({
     required this.ticker,
     required this.userId,
+    required this.currency,
+    required this.type,
+    required this.companyLogoUrl,
+    required this.stockExchange,
+    required this.description,
+    required this.quantity,
+    required this.purchaseDate,
     this.slug = '',
     this.id = 0,
-    this.type = '',
-    this.stockExchange = '',
-    this.currency,
-    this.description,
     this.companyName = '',
-    this.quantity = 0,
     this.totalValueOnPurchase,
-    this.companyLogoUrl,
     this.isPurchased = false,
-    this.purchaseDate,
     this.purchasePrice,
     this.totalCurrentValue,
     this.gainOrLossCad,
@@ -28,17 +28,39 @@ class Investment {
     this.updatedAt,
   });
 
+  const Investment.base({
+    required this.ticker,
+    required this.companyName,
+    required this.currency,
+    required this.type,
+    required this.stockExchange,
+    required this.description,
+    required this.quantity,
+    required this.companyLogoUrl,
+    required this.purchaseDate,
+  })  : id = 0,
+        slug = '',
+        isPurchased = quantity > 0,
+        totalValueOnPurchase = null,
+        purchasePrice = null,
+        totalCurrentValue = null,
+        gainOrLossCad = null,
+        gainOrLossUsd = null,
+        createdAt = null,
+        updatedAt = null,
+        userId = '';
+
   const Investment.create({
     required this.ticker,
     required this.companyName,
-    this.type = '',
-    this.stockExchange = '',
-    this.currency,
-    this.description,
-    this.quantity = 0,
-    this.companyLogoUrl,
-    this.purchaseDate,
-    this.userId = '',
+    required this.currency,
+    required this.type,
+    required this.stockExchange,
+    required this.description,
+    required this.quantity,
+    required this.companyLogoUrl,
+    required this.purchaseDate,
+    required this.userId,
   })  : id = 0,
         slug = '',
         isPurchased = quantity > 0,
@@ -66,9 +88,9 @@ class Investment {
   @JsonKey(name: 'stockExchange')
   final String stockExchange;
   @JsonKey(name: 'currency')
-  final String? currency;
+  final String currency;
   @JsonKey(name: 'description')
-  final String? description;
+  final String description;
   @JsonKey(name: 'companyName')
   final String companyName;
   @JsonKey(name: 'quantity')
@@ -76,11 +98,11 @@ class Investment {
   @JsonKey(name: 'totalValueOnPurchase')
   final double? totalValueOnPurchase;
   @JsonKey(name: 'companyLogoUrl')
-  final String? companyLogoUrl;
-  @JsonKey(name: 'isPurchased')
-  final bool isPurchased;
+  final String companyLogoUrl;
   @JsonKey(name: 'purchaseDate')
   final DateTime? purchaseDate;
+  @JsonKey(name: 'isPurchased')
+  final bool isPurchased;
   @JsonKey(name: 'purchasePrice')
   final double? purchasePrice;
   @JsonKey(name: 'totalCurrentValue')

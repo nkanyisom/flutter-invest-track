@@ -4,11 +4,12 @@ import 'package:authentication_repository/src/authentication_status.dart';
 import 'package:models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// The AuthenticationRepository exposes a Stream of AuthenticationStatus
+/// The [AuthenticationRepository] exposes a [Stream] of [AuthenticationStatus]
 /// updates which will be used to notify the application when a user signs in
 /// or out.
-/// Since we are maintaining a StreamController internally, a dispose method
-/// is exposed so that the controller can be closed when it is no longer needed.
+/// Since we are maintaining a [StreamController] internally, a [dispose]
+/// method is exposed so that the controller can be closed when it is no longer
+/// needed.
 class AuthenticationRepository {
   AuthenticationRepository(this._restClient, this._preferences);
 
@@ -27,7 +28,7 @@ class AuthenticationRepository {
       yield AuthenticationStatus.unauthenticated();
     }
 
-    // Yield the stream of authentication status changes
+    // Yield the stream of authentication status changes.
     yield* _controller.stream;
   }
 

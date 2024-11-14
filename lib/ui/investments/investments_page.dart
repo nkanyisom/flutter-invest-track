@@ -105,22 +105,29 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
             );
           } else {
             final List<Investment> allInvestments = state.investments;
-            if (MediaQuery.sizeOf(context).width > 600) {
-              return _buildDesktopTable(allInvestments);
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: state is CreatingInvestment
-                  ? allInvestments.length + 1
-                  : allInvestments.length,
-              itemBuilder: (_, int index) {
-                if (state is CreatingInvestment &&
-                    index == allInvestments.length) {
-                  return const ShimmerInvestment();
-                }
-                final Investment investment = allInvestments[index];
-                return InvestmentWidget(investment: investment);
+            return RefreshIndicator(
+              onRefresh: () async {
+                // Trigger event to load investments again.
+                return context
+                    .read<InvestmentsBloc>()
+                    .add(const LoadInvestments());
               },
+              child: MediaQuery.sizeOf(context).width > 600
+                  ? _buildDesktopTable(allInvestments)
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: state is CreatingInvestment
+                          ? allInvestments.length + 1
+                          : allInvestments.length,
+                      itemBuilder: (_, int index) {
+                        if (state is CreatingInvestment &&
+                            index == allInvestments.length) {
+                          return const ShimmerInvestment();
+                        }
+                        final Investment investment = allInvestments[index];
+                        return InvestmentWidget(investment: investment);
+                      },
+                    ),
             );
           }
         },
@@ -193,7 +200,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
             const DataCell(
               Text('TODO: dynamically calculate the "currentPrice"'),
             ),
-            DataCell(Text(investment.currency ?? 'N/A')),
+            DataCell(Text(investment.currency)),
             const DataCell(
               Text('TODO: dynamically calculate the "priceChange"'),
             ),

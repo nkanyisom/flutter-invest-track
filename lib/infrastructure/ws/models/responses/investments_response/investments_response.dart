@@ -8,7 +8,10 @@ part 'investments_response.g.dart';
 
 @JsonSerializable()
 class InvestmentsResponse implements Investments {
-  const InvestmentsResponse({required this.investments});
+  const InvestmentsResponse({
+    required this.investments,
+    required this.totalPages,
+  });
 
   factory InvestmentsResponse.fromJson(Map<String, dynamic> json) {
     return _$InvestmentsResponseFromJson(json);
@@ -17,11 +20,16 @@ class InvestmentsResponse implements Investments {
   @override
   @JsonKey(name: 'investments')
   final List<InvestmentResponse> investments;
+  @JsonKey(name: 'totalPages')
+  final int? totalPages;
 
   @override
   String toString() {
     if (kDebugMode) {
-      return 'InvestmentsResponse(investments: $investments)';
+      return 'InvestmentsResponse('
+          'investments: $investments, '
+          'totalPages: $totalPages,'
+          ')';
     } else {
       return super.toString();
     }
@@ -31,9 +39,11 @@ class InvestmentsResponse implements Investments {
 
   InvestmentsResponse copyWith({
     List<InvestmentResponse>? investments,
+    int? totalPages,
   }) {
     return InvestmentsResponse(
       investments: investments ?? this.investments,
+      totalPages: totalPages ?? this.totalPages,
     );
   }
 
