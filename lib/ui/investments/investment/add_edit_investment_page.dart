@@ -26,7 +26,6 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
   String? _investmentType;
   String? _stockExchange;
   String? _currency;
-  bool _isSubmitting = false;
   bool _deleteInProgress = false;
 
   @override
@@ -156,21 +155,45 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                       Widget? submitText,
                     ) {
                       const double progressIndicatorSize = 24.0;
-                      return ElevatedButton(
-                        onPressed: (_isSubmitting || titleValue.text.isEmpty)
-                            ? null
-                            : _onSubmit,
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                width: progressIndicatorSize,
-                                height: progressIndicatorSize,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.0,
-                                  ),
-                                ),
-                              )
-                            : submitText,
+                      return BlocConsumer<InvestmentsBloc, InvestmentsState>(
+                        listener: (
+                          BuildContext context,
+                          InvestmentsState state,
+                        ) {
+                          if (state is InvestmentSubmitted) {
+                            // Close the screen.
+                            Navigator.of(context).pop(true);
+                          } else if (state is InvestmentsError) {
+                            // Show a snackbar with the error message.
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${state.error}'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        builder: (_, InvestmentsState state) {
+                          final bool isSubmitting =
+                              state is UpdatingInvestment ||
+                                  state is CreatingInvestment;
+                          return ElevatedButton(
+                            onPressed: (isSubmitting || titleValue.text.isEmpty)
+                                ? null
+                                : _submit,
+                            child: isSubmitting
+                                ? const SizedBox(
+                                    width: progressIndicatorSize,
+                                    height: progressIndicatorSize,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                      ),
+                                    ),
+                                  )
+                                : submitText,
+                          );
+                        },
                       );
                     },
                   ),
@@ -193,10 +216,9 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
     super.dispose();
   }
 
-  Future<void> _onSubmit() async {
+  Future<void> _submit() async {
     final FormState? formState = _formKey.currentState;
-    if (_purchaseDate != null && formState != null && formState.validate()) {
-      setState(() => _isSubmitting = true);
+    if (formState != null && formState.validate()) {
       final Investment? investment = widget.investment;
       if (investment != null) {
         context.read<InvestmentsBloc>().add(
@@ -233,12 +255,14 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
             .read<InvestmentsBloc>()
             .add(CreateInvestmentEvent(investment: newInvestment));
       }
-
-      setState(() => _isSubmitting = false);
-      // Close the screen.
-      Navigator.of(context).pop(true);
     } else {
-      debugPrint('We should not be here, _purchaseDate should not be null.');
+// Handle invalid form case.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill out all required fields correctly.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

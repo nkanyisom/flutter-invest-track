@@ -220,16 +220,20 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
           investments: state.investments,
         ),
       );
-      final Investment updatedInvestment =
-          await _investmentsRepository.update(investment);
+      try {
+        final Investment updatedInvestment =
+            await _investmentsRepository.update(investment);
 
-      // Update the createdInvestment in the existing list of investments.
-      final int index = investments.indexWhere(
-        (Investment existingInvestment) =>
-            existingInvestment.id == updatedInvestment.id,
-      );
-      if (index != -1) {
-        investments[index] = updatedInvestment;
+        // Update the createdInvestment in the existing list of investments.
+        final int index = investments.indexWhere(
+          (Investment existingInvestment) =>
+              existingInvestment.id == updatedInvestment.id,
+        );
+        if (index != -1) {
+          investments[index] = updatedInvestment;
+        }
+      } catch (error) {
+        emitter(InvestmentsError(investments: investments, error: '$error'));
       }
     }
 

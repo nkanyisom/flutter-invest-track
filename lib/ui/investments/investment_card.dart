@@ -29,17 +29,7 @@ class InvestmentCard extends StatelessWidget {
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        onTap: () {
-          Navigator.of(context).push(
-            SlidePageRoute(
-              page: BlocProvider<InvestmentsBloc>.value(
-                value: context.read<InvestmentsBloc>()
-                  ..add(LoadInvestment(investment)),
-                child: const InvestmentPage(),
-              ),
-            ),
-          );
-        },
+        onTap: () => _navigateToInvestmentDetails(context),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -83,12 +73,6 @@ class InvestmentCard extends StatelessWidget {
               const SizedBox(height: 16),
               _buildInvestmentDetail(
                 context,
-                label: 'Stock Exchange',
-                value: investment.stockExchange,
-                icon: Icons.business,
-              ),
-              _buildInvestmentDetail(
-                context,
                 label: 'Quantity',
                 value: investment.quantity.toString(),
                 icon: Icons.pie_chart,
@@ -124,6 +108,18 @@ class InvestmentCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToInvestmentDetails(BuildContext context) {
+    Navigator.of(context).push(
+      SlidePageRoute(
+        page: BlocProvider<InvestmentsBloc>.value(
+          value: context.read<InvestmentsBloc>()
+            ..add(LoadInvestment(investment)),
+          child: const InvestmentPage(),
         ),
       ),
     );

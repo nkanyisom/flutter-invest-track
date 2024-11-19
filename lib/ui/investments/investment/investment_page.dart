@@ -86,7 +86,7 @@ class _InvestmentPageState extends State<InvestmentPage>
               ? ((gainOrLossCad / totalValuePurchaseCad) * 100) * 100
               : 0;
           final String currency = investment.currency;
-
+          final bool isPurchased = investment.isPurchased;
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -156,15 +156,16 @@ class _InvestmentPageState extends State<InvestmentPage>
                           currentPrice.toStringAsFixed(2),
                           Icons.monetization_on,
                         ),
-                      _buildInfoRow(
-                        context,
-                        'Quantity',
-                        investment.quantity.toString(),
-                        Icons.confirmation_number,
-                      ),
+                      if (isPurchased)
+                        _buildInfoRow(
+                          context,
+                          'Quantity',
+                          investment.quantity.toString(),
+                          Icons.confirmation_number,
+                        ),
                       if (state is ValueLoadingState)
                         const CircularProgressIndicator()
-                      else
+                      else if (isPurchased)
                         _buildInfoRow(
                           context,
                           'Total Value (Current)',
@@ -173,45 +174,48 @@ class _InvestmentPageState extends State<InvestmentPage>
                         ),
                       if (state is ValueLoadingState)
                         const CircularProgressIndicator()
-                      else
+                      else if (isPurchased)
                         _buildInfoRow(
                           context,
                           'Total Value (Current CAD)',
                           totalValueCad.toStringAsFixed(2),
                           Icons.currency_exchange_sharp,
                         ),
-                      _buildInfoRow(
-                        context,
-                        'Purchase Date',
-                        investment.purchaseDate
-                                ?.toIso8601String()
-                                .split('T')
-                                .firstOrNull ??
-                            '',
-                        Icons.calendar_today,
-                      ),
-                      if (state is InvestmentUpdated)
+                      if (isPurchased)
+                        _buildInfoRow(
+                          context,
+                          'Purchase Date',
+                          investment.purchaseDate
+                                  ?.toIso8601String()
+                                  .split('T')
+                                  .firstOrNull ??
+                              '',
+                          Icons.calendar_today,
+                        ),
+                      if (state is InvestmentUpdated && isPurchased)
                         _buildInfoRow(
                           context,
                           'Purchase Price',
                           state.purchasePrice.toStringAsFixed(2),
                           Icons.price_check,
                         )
-                      else
+                      else if (isPurchased)
                         const CircularProgressIndicator(),
-                      _buildInfoRow(
-                        context,
-                        'Total Value (Purchase)',
-                        totalValuePurchase.toStringAsFixed(2),
-                        Icons.money,
-                      ),
-                      _buildInfoRow(
-                        context,
-                        'Total Value (Purchase CAD)',
-                        totalValuePurchaseCad.toStringAsFixed(2),
-                        Icons.money_rounded,
-                      ),
-                      if (state is InvestmentUpdated)
+                      if (isPurchased)
+                        _buildInfoRow(
+                          context,
+                          'Total Value (Purchase)',
+                          totalValuePurchase.toStringAsFixed(2),
+                          Icons.money,
+                        ),
+                      if (isPurchased)
+                        _buildInfoRow(
+                          context,
+                          'Total Value (Purchase CAD)',
+                          totalValuePurchaseCad.toStringAsFixed(2),
+                          Icons.money_rounded,
+                        ),
+                      if (state is InvestmentUpdated && isPurchased)
                         _buildInfoRow(
                           context,
                           'Gain/Loss',
@@ -222,9 +226,9 @@ class _InvestmentPageState extends State<InvestmentPage>
                               : Icons.trending_down,
                           gainOrLoss >= 0 ? Colors.green : Colors.red,
                         )
-                      else
+                      else if (isPurchased)
                         const CircularProgressIndicator(),
-                      if (state is InvestmentUpdated)
+                      if (state is InvestmentUpdated && isPurchased)
                         _buildInfoRow(
                           context,
                           'Gain/Loss CAD',
@@ -236,7 +240,7 @@ class _InvestmentPageState extends State<InvestmentPage>
                               : Icons.trending_down,
                           gainOrLossCad >= 0 ? Colors.green : Colors.red,
                         )
-                      else
+                      else if (isPurchased)
                         const CircularProgressIndicator(),
                       if (state is InvestmentUpdated)
                         PriceChangeWidget(

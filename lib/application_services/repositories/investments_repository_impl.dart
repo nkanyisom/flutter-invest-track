@@ -30,6 +30,7 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
 
   @override
   Future<Investment> update(Investment investment) {
+    // TODO: handle error.
     return _restClient
         .updateInvestment(investment)
         .then((InvestmentResult response) {
