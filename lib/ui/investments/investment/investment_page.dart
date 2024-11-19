@@ -53,20 +53,36 @@ class _InvestmentPageState extends State<InvestmentPage>
           final Investment investment = state.selectedInvestment;
           final int quantity = investment.quantity;
           double totalValueCurrent = 0;
+
           double currentPrice = 0;
           if (state is CurrentValueLoaded) {
             currentPrice = state.currentPrice;
           }
+
+          double exchangeRate = 1;
+          if (state is ExchangeRateLoaded) {
+            exchangeRate = state.exchangeRate;
+          }
+
           double totalValuePurchase = 0;
-          if (state is PurchaseValueLoaded) {
+          if (state is InvestmentUpdated) {
             totalValuePurchase = quantity * state.purchasePrice;
             currentPrice = state.currentPrice;
             totalValueCurrent = quantity * state.currentPrice;
+            exchangeRate = state.exchangeRate;
           }
 
+          final double totalValueCad = totalValueCurrent * exchangeRate;
+          final double totalValuePurchaseCad =
+              totalValuePurchase * exchangeRate;
           final double gainOrLoss = totalValueCurrent - totalValuePurchase;
+          final double gainOrLossCad = totalValueCad - totalValuePurchaseCad;
           final double gainOrLossPercentage = totalValuePurchase != 0
               ? (gainOrLoss / totalValuePurchase) * 100
+              : 0;
+
+          final double gainOrLossPercentageCad = totalValuePurchaseCad != 0
+              ? ((gainOrLossCad / totalValuePurchaseCad) * 100) * 100
               : 0;
           final String currency = investment.currency;
 
@@ -104,12 +120,16 @@ class _InvestmentPageState extends State<InvestmentPage>
                     Row(
                       children: <Widget>[
                         if (investment.companyLogoUrl.isNotEmpty)
-                          ColoredBox(
-                            color: Colors.white,
-                            child: Image.network(
-                              investment.companyLogoUrl,
-                              width: 100,
-                              height: 100,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            // Adjust the radius as needed
+                            child: ColoredBox(
+                              color: Colors.white,
+                              child: Image.network(
+                                investment.companyLogoUrl,
+                                width: 100,
+                                height: 100,
+                              ),
                             ),
                           ),
                         const SizedBox(width: 16),
@@ -149,6 +169,15 @@ class _InvestmentPageState extends State<InvestmentPage>
                         totalValueCurrent.toStringAsFixed(2),
                         Icons.attach_money,
                       ),
+                    if (state is ValueLoadingState)
+                      const CircularProgressIndicator()
+                    else
+                      _buildInfoRow(
+                        context,
+                        'Total Value (Current CAD)',
+                        totalValueCad.toStringAsFixed(2),
+                        Icons.currency_exchange_sharp,
+                      ),
                     _buildInfoRow(
                       context,
                       'Purchase Date',
@@ -159,7 +188,7 @@ class _InvestmentPageState extends State<InvestmentPage>
                           '',
                       Icons.calendar_today,
                     ),
-                    if (state is PurchaseValueLoaded)
+                    if (state is InvestmentUpdated)
                       _buildInfoRow(
                         context,
                         'Purchase Price',
@@ -174,7 +203,13 @@ class _InvestmentPageState extends State<InvestmentPage>
                       totalValuePurchase.toStringAsFixed(2),
                       Icons.money,
                     ),
-                    if (state is PurchaseValueLoaded)
+                    _buildInfoRow(
+                      context,
+                      'Total Value (Purchase CAD)',
+                      totalValuePurchaseCad.toStringAsFixed(2),
+                      Icons.money_rounded,
+                    ),
+                    if (state is InvestmentUpdated)
                       _buildInfoRow(
                         context,
                         'Gain/Loss',
@@ -184,6 +219,19 @@ class _InvestmentPageState extends State<InvestmentPage>
                             ? Icons.trending_up
                             : Icons.trending_down,
                         gainOrLoss >= 0 ? Colors.green : Colors.red,
+                      )
+                    else
+                      const CircularProgressIndicator(),
+                    if (state is InvestmentUpdated)
+                      _buildInfoRow(
+                        context,
+                        'Gain/Loss CAD',
+                        '${gainOrLossCad.toStringAsFixed(2)} '
+                            '(${gainOrLossPercentageCad.toStringAsFixed(2)}%)',
+                        gainOrLossCad >= 0
+                            ? Icons.trending_up
+                            : Icons.trending_down,
+                        gainOrLossCad >= 0 ? Colors.green : Colors.red,
                       )
                     else
                       const CircularProgressIndicator(),
