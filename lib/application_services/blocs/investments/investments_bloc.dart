@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:investtrack/domain_services/exchange_rate_repository.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:models/models.dart';
 import 'package:yahoo_finance_data_reader/yahoo_finance_data_reader.dart';
@@ -11,8 +12,11 @@ part 'investments_event.dart';
 part 'investments_state.dart';
 
 class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
-  InvestmentsBloc(this._investmentsRepository, this._authenticationBloc)
-      : super(const InvestmentsInitial()) {
+  InvestmentsBloc(
+    this._investmentsRepository,
+    this._exchangeRateRepository,
+    this._authenticationBloc,
+  ) : super(const InvestmentsInitial()) {
     on<LoadInvestments>(_loadInvestments);
     on<CreateInvestmentEvent>((
       CreateInvestmentEvent event,
@@ -28,60 +32,101 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
     });
 
     on<DeleteInvestmentEvent>(_deleteInvestment);
-    on<LoadInvestment>((
-      LoadInvestment event,
-      Emitter<InvestmentsState> emit,
-    ) async {
+    on<LoadInvestment>(_loadInvestment);
+  }
+
+  FutureOr<void> _loadInvestment(
+    LoadInvestment event,
+    Emitter<InvestmentsState> emit,
+  ) async {
+    emit(
+      SelectedInvestmentState(
+        selectedInvestment: event.investment,
+        investments: state.investments,
+      ),
+    );
+
+    emit(
+      ValueLoadingState(
+        selectedInvestment: event.investment,
+        investments: state.investments,
+      ),
+    );
+
+    final String ticker = event.investment.ticker;
+
+    final YahooFinanceResponse currentValue =
+        await const YahooFinanceDailyReader().getDailyDTOs(
+      ticker,
+    );
+
+    final double? currentPrice = currentValue.candlesData.firstOrNull?.close;
+
+    if (currentPrice != null) {
       emit(
-        SelectedInvestmentState(
+        CurrentValueLoaded(
+          currentPrice: currentPrice,
           selectedInvestment: event.investment,
           investments: state.investments,
         ),
       );
+    }
 
+    final String currency = event.investment.currency;
+
+    final double cadExchangeRate = currency == 'CAD'
+        ? 1
+        : await _exchangeRateRepository.getExchangeRate(
+            fromCurrency: event.investment.currency,
+            toCurrency: 'CAD',
+          );
+    emit(
+      ExchangeRateLoaded(
+        currentPrice: currentPrice ?? 0,
+        selectedInvestment: event.investment,
+        investments: state.investments,
+        exchangeRate: cadExchangeRate,
+      ),
+    );
+
+    final YahooFinanceResponse purchaseValue =
+        await const YahooFinanceDailyReader().getDailyDTOs(
+      ticker,
+      startDate: event.investment.purchaseDate,
+    );
+    final double? purchasePrice = purchaseValue.candlesData.firstOrNull?.close;
+
+    if (purchasePrice != null && currentPrice != null) {
       emit(
-        ValueLoadingState(
+        InvestmentUpdated(
+          purchasePrice: purchasePrice,
           selectedInvestment: event.investment,
           investments: state.investments,
+          currentPrice: currentPrice,
+          exchangeRate: cadExchangeRate,
         ),
       );
+    }
 
-      final String ticker = event.investment.ticker;
-      final YahooFinanceResponse currentValue =
-          await const YahooFinanceDailyReader().getDailyDTOs(
-        ticker,
-        startDate: DateTime.now(),
+    final double priceChange =
+        await _investmentsRepository.fetchPriceChange(ticker);
+
+    if (state is InvestmentUpdated) {
+      emit(
+        (state as InvestmentUpdated).copyWith(priceChange: priceChange),
       );
-      final double? currentPrice = currentValue.candlesData.firstOrNull?.close;
-
-      if (currentPrice != null) {
-        emit(
-          CurrentValueLoaded(
-            currentPrice: currentPrice,
-            selectedInvestment: event.investment,
-            investments: state.investments,
-          ),
-        );
-      }
-      final YahooFinanceResponse purchaseValue =
-          await const YahooFinanceDailyReader().getDailyDTOs(
-        ticker,
-        startDate: event.investment.purchaseDate,
+    }
+    final double changePercentage =
+        await _investmentsRepository.fetchChangePercentage(
+      ticker,
+    );
+    if (state is InvestmentUpdated) {
+      emit(
+        (state as InvestmentUpdated).copyWith(
+          changePercentage: changePercentage,
+        ),
       );
-      final double? purchasePrice =
-          purchaseValue.candlesData.firstOrNull?.close;
-
-      if (purchasePrice != null && currentPrice != null) {
-        emit(
-          PurchaseValueLoaded(
-            purchasePrice: purchasePrice,
-            selectedInvestment: event.investment,
-            investments: state.investments,
-            currentPrice: currentPrice,
-          ),
-        );
-      }
-    });
+    }
   }
 
   FutureOr<void> _deleteInvestment(
@@ -193,5 +238,6 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
   }
 
   final InvestmentsRepository _investmentsRepository;
+  final ExchangeRateRepository _exchangeRateRepository;
   final AuthenticationBloc _authenticationBloc;
 }

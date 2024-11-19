@@ -5,76 +5,60 @@ import 'package:models/models.dart';
 
 part 'sign_out_response.g.dart';
 
-SignOutResponse signOutResponseFromJson(String str) =>
-    SignOutResponse.fromJson(json.decode(str));
+class SignOutResponse implements LogoutResponse {
+  const SignOutResponse({
+    this.displayConfig,
+    this.userSettings,
+    this.organizationSettings,
+    this.maintenanceMode,
+  });
 
-String signOutResponseToJson(SignOutResponse data) =>
-    json.encode(data.toJson());
-
-class SignOutResponse extends LogoutResponse {
-  SignOutResponse({
-    DisplayConfig? displayConfig,
-    UserSettings? userSettings,
-    OrganizationSettings? organizationSettings,
-    bool? maintenanceMode,
-  }) {
-    _displayConfig = displayConfig;
-    _userSettings = userSettings;
-    _organizationSettings = organizationSettings;
-    _maintenanceMode = maintenanceMode;
+  factory SignOutResponse.fromJson(Map<String, dynamic> json) {
+    return SignOutResponse(
+      displayConfig: json['display_config'] != null
+          ? DisplayConfig.fromJson(json['display_config'])
+          : null,
+      userSettings: json['user_settings'] != null
+          ? UserSettings.fromJson(json['user_settings'])
+          : null,
+      organizationSettings: json['organization_settings'] != null
+          ? OrganizationSettings.fromJson(json['organization_settings'])
+          : null,
+      maintenanceMode: json['maintenance_mode'],
+    );
   }
 
-  SignOutResponse.fromJson(dynamic json) {
-    _displayConfig = json['display_config'] != null
-        ? DisplayConfig.fromJson(json['display_config'])
-        : null;
-    _userSettings = json['user_settings'] != null
-        ? UserSettings.fromJson(json['user_settings'])
-        : null;
-    _organizationSettings = json['organization_settings'] != null
-        ? OrganizationSettings.fromJson(json['organization_settings'])
-        : null;
-    _maintenanceMode = json['maintenance_mode'];
-  }
-
-  DisplayConfig? _displayConfig;
-  UserSettings? _userSettings;
-  OrganizationSettings? _organizationSettings;
-  bool? _maintenanceMode;
+  final DisplayConfig? displayConfig;
+  final UserSettings? userSettings;
+  final OrganizationSettings? organizationSettings;
+  final bool? maintenanceMode;
 
   SignOutResponse copyWith({
     DisplayConfig? displayConfig,
     UserSettings? userSettings,
     OrganizationSettings? organizationSettings,
     bool? maintenanceMode,
-  }) =>
-      SignOutResponse(
-        displayConfig: displayConfig ?? _displayConfig,
-        userSettings: userSettings ?? _userSettings,
-        organizationSettings: organizationSettings ?? _organizationSettings,
-        maintenanceMode: maintenanceMode ?? _maintenanceMode,
-      );
-
-  DisplayConfig? get displayConfig => _displayConfig;
-
-  UserSettings? get userSettings => _userSettings;
-
-  OrganizationSettings? get organizationSettings => _organizationSettings;
-
-  bool? get maintenanceMode => _maintenanceMode;
+  }) {
+    return SignOutResponse(
+      displayConfig: displayConfig ?? this.displayConfig,
+      userSettings: userSettings ?? this.userSettings,
+      organizationSettings: organizationSettings ?? this.organizationSettings,
+      maintenanceMode: maintenanceMode ?? this.maintenanceMode,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-    if (_displayConfig != null) {
-      map['display_config'] = _displayConfig?.toJson();
+    if (displayConfig != null) {
+      map['display_config'] = displayConfig?.toJson();
     }
-    if (_userSettings != null) {
-      map['user_settings'] = _userSettings?.toJson();
+    if (userSettings != null) {
+      map['user_settings'] = userSettings?.toJson();
     }
-    if (_organizationSettings != null) {
-      map['organization_settings'] = _organizationSettings?.toJson();
+    if (organizationSettings != null) {
+      map['organization_settings'] = organizationSettings?.toJson();
     }
-    map['maintenance_mode'] = _maintenanceMode;
+    map['maintenance_mode'] = maintenanceMode;
     return map;
   }
 }
@@ -84,177 +68,140 @@ class SignOutResponse extends LogoutResponse {
 /// actions : {"admin_delete":true}
 /// domains : {"enabled":false,"enrollment_modes":[],"default_role":""}
 /// creator_role : "org:admin"
-
-OrganizationSettings organizationSettingsFromJson(String str) =>
-    OrganizationSettings.fromJson(json.decode(str));
-
-String organizationSettingsToJson(OrganizationSettings data) =>
-    json.encode(data.toJson());
-
 class OrganizationSettings {
-  OrganizationSettings({
-    bool? enabled,
-    int? maxAllowedMemberships,
-    Actions? actions,
-    String? creatorRole,
-  }) {
-    _enabled = enabled;
-    _maxAllowedMemberships = maxAllowedMemberships;
-    _actions = actions;
-    _creatorRole = creatorRole;
+  const OrganizationSettings({
+    this.enabled,
+    this.maxAllowedMemberships,
+    this.actions,
+    this.creatorRole,
+  });
+
+  factory OrganizationSettings.fromJson(Map<String, dynamic> json) {
+    return OrganizationSettings(
+      enabled: json['enabled'],
+      maxAllowedMemberships: json['max_allowed_memberships'],
+      actions:
+          json['actions'] != null ? Actions.fromJson(json['actions']) : null,
+      creatorRole: json['creator_role'],
+    );
   }
 
-  OrganizationSettings.fromJson(dynamic json) {
-    _enabled = json['enabled'];
-    _maxAllowedMemberships = json['max_allowed_memberships'];
-    _actions =
-        json['actions'] != null ? Actions.fromJson(json['actions']) : null;
-    _creatorRole = json['creator_role'];
-  }
-
-  bool? _enabled;
-  int? _maxAllowedMemberships;
-  Actions? _actions;
-  String? _creatorRole;
+  final bool? enabled;
+  final int? maxAllowedMemberships;
+  final Actions? actions;
+  final String? creatorRole;
 
   OrganizationSettings copyWith({
     bool? enabled,
     int? maxAllowedMemberships,
     Actions? actions,
     String? creatorRole,
-  }) =>
-      OrganizationSettings(
-        enabled: enabled ?? _enabled,
-        maxAllowedMemberships: maxAllowedMemberships ?? _maxAllowedMemberships,
-        actions: actions ?? _actions,
-        creatorRole: creatorRole ?? _creatorRole,
-      );
-
-  bool? get enabled => _enabled;
-
-  int? get maxAllowedMemberships => _maxAllowedMemberships;
-
-  Actions? get actions => _actions;
-
-  String? get creatorRole => _creatorRole;
+  }) {
+    return OrganizationSettings(
+      enabled: enabled ?? this.enabled,
+      maxAllowedMemberships:
+          maxAllowedMemberships ?? this.maxAllowedMemberships,
+      actions: actions ?? this.actions,
+      creatorRole: creatorRole ?? this.creatorRole,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-    map['enabled'] = _enabled;
-    map['max_allowed_memberships'] = _maxAllowedMemberships;
-    if (_actions != null) {
-      map['actions'] = _actions?.toJson();
+    map['enabled'] = enabled;
+    map['max_allowed_memberships'] = maxAllowedMemberships;
+    if (actions != null) {
+      map['actions'] = actions?.toJson();
     }
-    map['creator_role'] = _creatorRole;
+    map['creator_role'] = creatorRole;
     return map;
   }
 }
 
 /// admin_delete : true
-
-Actions actionsFromJson(String str) => Actions.fromJson(json.decode(str));
-
-String actionsToJson(Actions data) => json.encode(data.toJson());
-
 class Actions {
-  Actions({
-    bool? adminDelete,
-  }) {
-    _adminDelete = adminDelete;
+  const Actions({
+    this.adminDelete,
+  });
+
+  factory Actions.fromJson(Map<String, dynamic> json) {
+    return Actions(
+      adminDelete: json['admin_delete'],
+    );
   }
 
-  Actions.fromJson(dynamic json) {
-    _adminDelete = json['admin_delete'];
-  }
-
-  bool? _adminDelete;
+  final bool? adminDelete;
 
   Actions copyWith({
     bool? adminDelete,
-  }) =>
-      Actions(
-        adminDelete: adminDelete ?? _adminDelete,
-      );
-
-  bool? get adminDelete => _adminDelete;
+  }) {
+    return Actions(
+      adminDelete: adminDelete ?? this.adminDelete,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-    map['admin_delete'] = _adminDelete;
+    map['admin_delete'] = adminDelete;
     return map;
   }
 }
 
-UserSettings userSettingsFromJson(String str) =>
-    UserSettings.fromJson(json.decode(str));
-
-String userSettingsToJson(UserSettings data) => json.encode(data.toJson());
-
 class UserSettings {
-  UserSettings({
-    Attributes? attributes,
-    SignIn? signIn,
-    SignUp? signUp,
-    Restrictions? restrictions,
-    UsernameSettings? usernameSettings,
-    Actions? actions,
-    AttackProtection? attackProtection,
-    PasskeySettings? passkeySettings,
-    Social? social,
-    PasswordSettings? passwordSettings,
-    Saml? saml,
-  }) {
-    _attributes = attributes;
-    _signIn = signIn;
-    _signUp = signUp;
-    _restrictions = restrictions;
-    _usernameSettings = usernameSettings;
-    _actions = actions;
-    _attackProtection = attackProtection;
-    _passkeySettings = passkeySettings;
-    _social = social;
-    _passwordSettings = passwordSettings;
-    _saml = saml;
+  const UserSettings({
+    this.attributes,
+    this.signIn,
+    this.signUp,
+    this.restrictions,
+    this.usernameSettings,
+    this.actions,
+    this.attackProtection,
+    this.passkeySettings,
+    this.social,
+    this.passwordSettings,
+    this.saml,
+  });
+
+  factory UserSettings.fromJson(dynamic json) {
+    return UserSettings(
+      attributes: json['attributes'] != null
+          ? Attributes.fromJson(json['attributes'])
+          : null,
+      signIn: json['sign_in'] != null ? SignIn.fromJson(json['sign_in']) : null,
+      signUp: json['sign_up'] != null ? SignUp.fromJson(json['sign_up']) : null,
+      restrictions: json['restrictions'] != null
+          ? Restrictions.fromJson(json['restrictions'])
+          : null,
+      usernameSettings: json['username_settings'] != null
+          ? UsernameSettings.fromJson(json['username_settings'])
+          : null,
+      actions:
+          json['actions'] != null ? Actions.fromJson(json['actions']) : null,
+      attackProtection: json['attack_protection'] != null
+          ? AttackProtection.fromJson(json['attack_protection'])
+          : null,
+      passkeySettings: json['passkey_settings'] != null
+          ? PasskeySettings.fromJson(json['passkey_settings'])
+          : null,
+      social: json['social'] != null ? Social.fromJson(json['social']) : null,
+      passwordSettings: json['password_settings'] != null
+          ? PasswordSettings.fromJson(json['password_settings'])
+          : null,
+      saml: json['saml'] != null ? Saml.fromJson(json['saml']) : null,
+    );
   }
 
-  UserSettings.fromJson(dynamic json) {
-    _attributes = json['attributes'] != null
-        ? Attributes.fromJson(json['attributes'])
-        : null;
-    _signIn = json['sign_in'] != null ? SignIn.fromJson(json['sign_in']) : null;
-    _signUp = json['sign_up'] != null ? SignUp.fromJson(json['sign_up']) : null;
-    _restrictions = json['restrictions'] != null
-        ? Restrictions.fromJson(json['restrictions'])
-        : null;
-    _usernameSettings = json['username_settings'] != null
-        ? UsernameSettings.fromJson(json['username_settings'])
-        : null;
-    _actions =
-        json['actions'] != null ? Actions.fromJson(json['actions']) : null;
-    _attackProtection = json['attack_protection'] != null
-        ? AttackProtection.fromJson(json['attack_protection'])
-        : null;
-    _passkeySettings = json['passkey_settings'] != null
-        ? PasskeySettings.fromJson(json['passkey_settings'])
-        : null;
-    _social = json['social'] != null ? Social.fromJson(json['social']) : null;
-    _passwordSettings = json['password_settings'] != null
-        ? PasswordSettings.fromJson(json['password_settings'])
-        : null;
-    _saml = json['saml'] != null ? Saml.fromJson(json['saml']) : null;
-  }
-
-  Attributes? _attributes;
-  SignIn? _signIn;
-  SignUp? _signUp;
-  Restrictions? _restrictions;
-  UsernameSettings? _usernameSettings;
-  Actions? _actions;
-  AttackProtection? _attackProtection;
-  PasskeySettings? _passkeySettings;
-  Social? _social;
-  PasswordSettings? _passwordSettings;
-  Saml? _saml;
+  final Attributes? attributes;
+  final SignIn? signIn;
+  final SignUp? signUp;
+  final Restrictions? restrictions;
+  final UsernameSettings? usernameSettings;
+  final Actions? actions;
+  final AttackProtection? attackProtection;
+  final PasskeySettings? passkeySettings;
+  final Social? social;
+  final PasswordSettings? passwordSettings;
+  final Saml? saml;
 
   UserSettings copyWith({
     Attributes? attributes,
@@ -268,87 +215,62 @@ class UserSettings {
     Social? social,
     PasswordSettings? passwordSettings,
     Saml? saml,
-  }) =>
-      UserSettings(
-        attributes: attributes ?? _attributes,
-        signIn: signIn ?? _signIn,
-        signUp: signUp ?? _signUp,
-        restrictions: restrictions ?? _restrictions,
-        usernameSettings: usernameSettings ?? _usernameSettings,
-        actions: actions ?? _actions,
-        attackProtection: attackProtection ?? _attackProtection,
-        passkeySettings: passkeySettings ?? _passkeySettings,
-        social: social ?? _social,
-        passwordSettings: passwordSettings ?? _passwordSettings,
-        saml: saml ?? _saml,
-      );
-
-  Attributes? get attributes => _attributes;
-
-  SignIn? get signIn => _signIn;
-
-  SignUp? get signUp => _signUp;
-
-  Restrictions? get restrictions => _restrictions;
-
-  UsernameSettings? get usernameSettings => _usernameSettings;
-
-  Actions? get actions => _actions;
-
-  AttackProtection? get attackProtection => _attackProtection;
-
-  PasskeySettings? get passkeySettings => _passkeySettings;
-
-  Social? get social => _social;
-
-  PasswordSettings? get passwordSettings => _passwordSettings;
-
-  Saml? get saml => _saml;
+  }) {
+    return UserSettings(
+      attributes: attributes ?? this.attributes,
+      signIn: signIn ?? this.signIn,
+      signUp: signUp ?? this.signUp,
+      restrictions: restrictions ?? this.restrictions,
+      usernameSettings: usernameSettings ?? this.usernameSettings,
+      actions: actions ?? this.actions,
+      attackProtection: attackProtection ?? this.attackProtection,
+      passkeySettings: passkeySettings ?? this.passkeySettings,
+      social: social ?? this.social,
+      passwordSettings: passwordSettings ?? this.passwordSettings,
+      saml: saml ?? this.saml,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-    if (_attributes != null) {
-      map['attributes'] = _attributes?.toJson();
+    if (attributes != null) {
+      map['attributes'] = attributes?.toJson();
     }
-    if (_signIn != null) {
-      map['sign_in'] = _signIn?.toJson();
+    if (signIn != null) {
+      map['sign_in'] = signIn?.toJson();
     }
-    if (_signUp != null) {
-      map['sign_up'] = _signUp?.toJson();
+    if (signUp != null) {
+      map['sign_up'] = signUp?.toJson();
     }
-    if (_restrictions != null) {
-      map['restrictions'] = _restrictions?.toJson();
+    if (restrictions != null) {
+      map['restrictions'] = restrictions?.toJson();
     }
-    if (_usernameSettings != null) {
-      map['username_settings'] = _usernameSettings?.toJson();
+    if (usernameSettings != null) {
+      map['username_settings'] = usernameSettings?.toJson();
     }
-    if (_actions != null) {
-      map['actions'] = _actions?.toJson();
+    if (actions != null) {
+      map['actions'] = actions?.toJson();
     }
-    if (_attackProtection != null) {
-      map['attack_protection'] = _attackProtection?.toJson();
+    if (attackProtection != null) {
+      map['attack_protection'] = attackProtection?.toJson();
     }
-    if (_passkeySettings != null) {
-      map['passkey_settings'] = _passkeySettings?.toJson();
+    if (passkeySettings != null) {
+      map['passkey_settings'] = passkeySettings?.toJson();
     }
-    if (_social != null) {
-      map['social'] = _social?.toJson();
+    if (social != null) {
+      map['social'] = social?.toJson();
     }
-    if (_passwordSettings != null) {
-      map['password_settings'] = _passwordSettings?.toJson();
+    if (passwordSettings != null) {
+      map['password_settings'] = passwordSettings?.toJson();
     }
-    if (_saml != null) {
-      map['saml'] = _saml?.toJson();
+    if (saml != null) {
+      map['saml'] = saml?.toJson();
     }
     return map;
   }
 }
 
 /// enabled : false
-
-Saml samlFromJson(String str) => Saml.fromJson(json.decode(str));
-
-String samlToJson(Saml data) => json.encode(data.toJson());
 
 class Saml {
   Saml({
@@ -390,13 +312,6 @@ class Saml {
 /// min_zxcvbn_strength : 0
 /// enforce_hibp_on_sign_in : false
 /// allowed_special_characters : "!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~"
-
-PasswordSettings passwordSettingsFromJson(String str) =>
-    PasswordSettings.fromJson(json.decode(str));
-
-String passwordSettingsToJson(PasswordSettings data) =>
-    json.encode(data.toJson());
-
 class PasswordSettings {
   PasswordSettings({
     bool? disableHibp,

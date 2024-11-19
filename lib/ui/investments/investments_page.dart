@@ -7,9 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/application_services/blocs/menu/menu_bloc.dart';
+import 'package:investtrack/domain_services/exchange_rate_repository.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:investtrack/router/slide_page_route.dart';
-import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
+import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
 import 'package:investtrack/ui/investments/investment_widget.dart';
 import 'package:investtrack/ui/investments/shimmer_investment.dart';
 import 'package:investtrack/ui/menu/app_drawer.dart';
@@ -31,6 +32,7 @@ class InvestmentsPage extends StatefulWidget {
         return BlocProvider<InvestmentsBloc>(
           create: (_) => InvestmentsBloc(
             GetIt.I.get<InvestmentsRepository>(),
+            GetIt.I.get<ExchangeRateRepository>(),
             authenticationBloc,
           )..add(const LoadInvestments()),
           child: const InvestmentsPage(),

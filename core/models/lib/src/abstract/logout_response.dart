@@ -1,3 +1,3 @@
-abstract class LogoutResponse {
+abstract interface class LogoutResponse {
   const LogoutResponse();
 }

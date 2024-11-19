@@ -2,500 +2,826 @@ import 'dart:core';
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:models/models.dart';
 
 part 'rates_response.g.dart';
 
-@JsonSerializable()
-class RatesResponse {
+@JsonSerializable(createToJson: false)
+class RatesResponse implements Rates {
   factory RatesResponse.fromJson(Map<String, dynamic> json) =>
       _$RatesResponseFromJson(json);
 
   const RatesResponse({
-    this.cad,
-    this.aed,
-    this.afn,
-    this.all,
-    this.amd,
-    this.ang,
-    this.aoa,
-    this.ars,
-    this.aud,
-    this.awg,
-    this.azn,
-    this.bam,
-    this.bbd,
-    this.bdt,
-    this.bgn,
-    this.bhd,
-    this.bif,
-    this.bmd,
-    this.bnd,
-    this.bob,
-    this.brl,
-    this.bsd,
-    this.btn,
-    this.bwp,
-    this.byn,
-    this.bzd,
-    this.cdf,
-    this.chf,
-    this.clp,
-    this.cny,
-    this.cop,
-    this.crc,
-    this.cup,
-    this.cve,
-    this.czk,
-    this.djf,
-    this.dkk,
-    this.dop,
-    this.dzd,
-    this.egp,
-    this.ern,
-    this.etb,
-    this.eur,
-    this.fjd,
-    this.fkp,
-    this.fok,
-    this.gbp,
-    this.gel,
-    this.ggp,
-    this.ghs,
-    this.gip,
-    this.gmd,
-    this.gnf,
-    this.gtq,
-    this.gyd,
-    this.hkd,
-    this.hnl,
-    this.hrk,
-    this.htg,
-    this.huf,
-    this.idr,
-    this.ils,
-    this.imp,
-    this.inr,
-    this.iqd,
-    this.irr,
-    this.isk,
-    this.jep,
-    this.jmd,
-    this.jod,
-    this.jpy,
-    this.kes,
-    this.kgs,
-    this.khr,
-    this.kid,
-    this.kmf,
-    this.krw,
-    this.kwd,
-    this.kyd,
-    this.kzt,
-    this.lak,
-    this.lbp,
-    this.lkr,
-    this.lrd,
-    this.lsl,
-    this.lyd,
-    this.mad,
-    this.mdl,
-    this.mga,
-    this.mkd,
-    this.mmk,
-    this.mnt,
-    this.mop,
-    this.mru,
-    this.mur,
-    this.mvr,
-    this.mwk,
-    this.mxn,
-    this.myr,
-    this.mzn,
-    this.nad,
-    this.ngn,
-    this.nio,
-    this.nok,
-    this.npr,
-    this.nzd,
-    this.omr,
-    this.pab,
-    this.pen,
-    this.pgk,
-    this.php,
-    this.pkr,
-    this.pln,
-    this.pyg,
-    this.qar,
-    this.ron,
-    this.rsd,
-    this.rub,
-    this.rwf,
-    this.sar,
-    this.sbd,
-    this.scr,
-    this.sdg,
-    this.sek,
-    this.sgd,
-    this.shp,
-    this.sle,
-    this.sll,
-    this.sos,
-    this.srd,
-    this.ssp,
-    this.stn,
-    this.syp,
-    this.szl,
-    this.thb,
-    this.tjs,
-    this.tmt,
-    this.tnd,
-    this.top,
-    this.ttd,
-    this.tvd,
-    this.twd,
-    this.tzs,
-    this.uah,
-    this.ugx,
-    this.usd,
-    this.uyu,
-    this.uzs,
-    this.ves,
-    this.vnd,
-    this.vuv,
-    this.wst,
-    this.xaf,
-    this.xcd,
-    this.xdr,
-    this.xof,
-    this.xpf,
-    this.yer,
-    this.zar,
-    this.zmw,
-    this.zwl,
+    required this.cad,
+    required this.pln,
+    required this.usd,
+    required this.uah,
+    required this.eur,
+    required this.aed,
+    required this.afn,
+    required this.all,
+    required this.amd,
+    required this.ang,
+    required this.aoa,
+    required this.ars,
+    required this.aud,
+    required this.awg,
+    required this.azn,
+    required this.bam,
+    required this.bbd,
+    required this.bdt,
+    required this.bgn,
+    required this.bhd,
+    required this.bif,
+    required this.bmd,
+    required this.bnd,
+    required this.bob,
+    required this.brl,
+    required this.bsd,
+    required this.btn,
+    required this.bwp,
+    required this.byn,
+    required this.bzd,
+    required this.cdf,
+    required this.chf,
+    required this.clp,
+    required this.cny,
+    required this.cop,
+    required this.crc,
+    required this.cup,
+    required this.cve,
+    required this.czk,
+    required this.djf,
+    required this.dkk,
+    required this.dop,
+    required this.dzd,
+    required this.egp,
+    required this.ern,
+    required this.etb,
+    required this.fjd,
+    required this.fkp,
+    required this.fok,
+    required this.gbp,
+    required this.gel,
+    required this.ggp,
+    required this.ghs,
+    required this.gip,
+    required this.gmd,
+    required this.gnf,
+    required this.gtq,
+    required this.gyd,
+    required this.hnl,
+    required this.hrk,
+    required this.htg,
+    required this.huf,
+    required this.idr,
+    required this.ils,
+    required this.imp,
+    required this.inr,
+    required this.iqd,
+    required this.irr,
+    required this.isk,
+    required this.jep,
+    required this.jmd,
+    required this.jod,
+    required this.jpy,
+    required this.kes,
+    required this.kgs,
+    required this.khr,
+    required this.kid,
+    required this.kmf,
+    required this.krw,
+    required this.kwd,
+    required this.kyd,
+    required this.kzt,
+    required this.lak,
+    required this.lbp,
+    required this.lkr,
+    required this.lrd,
+    required this.lsl,
+    required this.lyd,
+    required this.mad,
+    required this.mdl,
+    required this.mga,
+    required this.mkd,
+    required this.mmk,
+    required this.mnt,
+    required this.mop,
+    required this.mru,
+    required this.mur,
+    required this.mvr,
+    required this.mwk,
+    required this.mxn,
+    required this.myr,
+    required this.mzn,
+    required this.nad,
+    required this.ngn,
+    required this.nio,
+    required this.nok,
+    required this.npr,
+    required this.nzd,
+    required this.omr,
+    required this.pab,
+    required this.pen,
+    required this.pgk,
+    required this.php,
+    required this.pkr,
+    required this.pyg,
+    required this.qar,
+    required this.ron,
+    required this.rsd,
+    required this.rub,
+    required this.rwf,
+    required this.sar,
+    required this.sbd,
+    required this.scr,
+    required this.sdg,
+    required this.sek,
+    required this.sgd,
+    required this.shp,
+    required this.sle,
+    required this.sll,
+    required this.sos,
+    required this.srd,
+    required this.ssp,
+    required this.stn,
+    required this.syp,
+    required this.szl,
+    required this.thb,
+    required this.tjs,
+    required this.tmt,
+    required this.tnd,
+    required this.top,
+    required this.ttd,
+    required this.tvd,
+    required this.twd,
+    required this.tzs,
+    required this.ugx,
+    required this.uyu,
+    required this.uzs,
+    required this.ves,
+    required this.vnd,
+    required this.vuv,
+    required this.wst,
+    required this.xaf,
+    required this.xcd,
+    required this.xdr,
+    required this.xof,
+    required this.xpf,
+    required this.yer,
+    required this.zar,
+    required this.zmw,
+    required this.zwl,
   });
 
+  @override
+  Map<String, double> toJson() => <String, double>{
+        'USD': usd,
+        'CAD': cad,
+        'UAH': uah,
+        'EUR': eur,
+        'PLN': pln,
+        'AED': aed,
+        'AFN': afn,
+        'ALL': all,
+        'AMD': amd,
+        'ANG': ang,
+        'AOA': aoa,
+        'ARS': ars,
+        'AUD': aud,
+        'AWG': awg,
+        'AZN': azn,
+        'BAM': bam,
+        'BBD': bbd,
+        'BDT': bdt,
+        'BGN': bgn,
+        'BHD': bhd,
+        'BIF': bif,
+        'BMD': bmd,
+        'BND': bnd,
+        'BOB': bob,
+        'BRL': brl,
+        'BSD': bsd,
+        'BTN': btn,
+        'BWP': bwp,
+        'BYN': byn,
+        'BZD': bzd,
+        'CDF': cdf,
+        'CHF': chf,
+        'CLP': clp,
+        'CNY': cny,
+        'COP': cop,
+        'CRC': crc,
+        'CUP': cup,
+        'CVE': cve,
+        'CZK': czk,
+        'DJF': djf,
+        'DKK': dkk,
+        'DOP': dop,
+        'DZD': dzd,
+        'EGP': egp,
+        'ERN': ern,
+        'ETB': etb,
+        'FJD': fjd,
+        'FKP': fkp,
+        'FOK': fok,
+        'GBP': gbp,
+        'GEL': gel,
+        'GGP': ggp,
+        'GHS': ghs,
+        'GIP': gip,
+        'GMD': gmd,
+        'GNF': gnf,
+        'GTQ': gtq,
+        'GYD': gyd,
+        'HNL': hnl,
+        'HRK': hrk,
+        'HTG': htg,
+        'HUF': huf,
+        'IDR': idr,
+        'ILS': ils,
+        'IMP': imp,
+        'INR': inr,
+        'IQD': iqd,
+        'IRR': irr,
+        'ISK': isk,
+        'JEP': jep,
+        'JMD': jmd,
+        'JOD': jod,
+        'JPY': jpy,
+        'KES': kes,
+        'KGS': kgs,
+        'KHR': khr,
+        'KID': kid,
+        'KMF': kmf,
+        'KRW': krw,
+        'KWD': kwd,
+        'KYD': kyd,
+        'KZT': kzt,
+        'LAK': lak,
+        'LBP': lbp,
+        'LKR': lkr,
+        'LRD': lrd,
+        'LSL': lsl,
+        'LYD': lyd,
+        'MAD': mad,
+        'MDL': mdl,
+        'MGA': mga,
+        'MKD': mkd,
+        'MMK': mmk,
+        'MNT': mnt,
+        'MOP': mop,
+        'MRU': mru,
+        'MUR': mur,
+        'MVR': mvr,
+        'MWK': mwk,
+        'MXN': mxn,
+        'MYR': myr,
+        'MZN': mzn,
+        'NAD': nad,
+        'NGN': ngn,
+        'NIO': nio,
+        'NOK': nok,
+        'NPR': npr,
+        'NZD': nzd,
+        'OMR': omr,
+        'PAB': pab,
+        'PEN': pen,
+        'PGK': pgk,
+        'PHP': php,
+        'PKR': pkr,
+        'PYG': pyg,
+        'QAR': qar,
+        'RON': ron,
+        'RSD': rsd,
+        'RUB': rub,
+        'RWF': rwf,
+        'SAR': sar,
+        'SBD': sbd,
+        'SCR': scr,
+        'SDG': sdg,
+        'SEK': sek,
+        'SGD': sgd,
+        'SHP': shp,
+        'SLE': sle,
+        'SLL': sll,
+        'SOS': sos,
+        'SRD': srd,
+        'SSP': ssp,
+        'STN': stn,
+        'SYP': syp,
+        'SZL': szl,
+        'THB': thb,
+        'TJS': tjs,
+        'TMT': tmt,
+        'TND': tnd,
+        'TOP': top,
+        'TTD': ttd,
+        'TVD': tvd,
+        'TWD': twd,
+        'TZS': tzs,
+        'UGX': ugx,
+        'UYU': uyu,
+        'UZS': uzs,
+        'VES': ves,
+        'VND': vnd,
+        'VUV': vuv,
+        'WST': wst,
+        'XAF': xaf,
+        'XCD': xcd,
+        'XDR': xdr,
+        'XOF': xof,
+        'XPF': xpf,
+        'YER': yer,
+        'ZAR': zar,
+        'ZMW': zmw,
+        'ZWL': zwl,
+      };
+
+  @override
   @JsonKey(name: 'CAD')
-  final int? cad;
-  @JsonKey(name: 'AED')
-  final double? aed;
-  @JsonKey(name: 'AFN')
-  final double? afn;
-  @JsonKey(name: 'ALL')
-  final double? all;
-  @JsonKey(name: 'AMD')
-  final double? amd;
-  @JsonKey(name: 'ANG')
-  final double? ang;
-  @JsonKey(name: 'AOA')
-  final double? aoa;
-  @JsonKey(name: 'ARS')
-  final double? ars;
-  @JsonKey(name: 'AUD')
-  final double? aud;
-  @JsonKey(name: 'AWG')
-  final double? awg;
-  @JsonKey(name: 'AZN')
-  final double? azn;
-  @JsonKey(name: 'BAM')
-  final double? bam;
-  @JsonKey(name: 'BBD')
-  final double? bbd;
-  @JsonKey(name: 'BDT')
-  final double? bdt;
-  @JsonKey(name: 'BGN')
-  final double? bgn;
-  @JsonKey(name: 'BHD')
-  final double? bhd;
-  @JsonKey(name: 'BIF')
-  final double? bif;
-  @JsonKey(name: 'BMD')
-  final double? bmd;
-  @JsonKey(name: 'BND')
-  final double? bnd;
-  @JsonKey(name: 'BOB')
-  final double? bob;
-  @JsonKey(name: 'BRL')
-  final double? brl;
-  @JsonKey(name: 'BSD')
-  final double? bsd;
-  @JsonKey(name: 'BTN')
-  final double? btn;
-  @JsonKey(name: 'BWP')
-  final double? bwp;
-  @JsonKey(name: 'BYN')
-  final double? byn;
-  @JsonKey(name: 'BZD')
-  final double? bzd;
-  @JsonKey(name: 'CDF')
-  final double? cdf;
-  @JsonKey(name: 'CHF')
-  final double? chf;
-  @JsonKey(name: 'CLP')
-  final double? clp;
-  @JsonKey(name: 'CNY')
-  final double? cny;
-  @JsonKey(name: 'COP')
-  final double? cop;
-  @JsonKey(name: 'CRC')
-  final double? crc;
-  @JsonKey(name: 'CUP')
-  final double? cup;
-  @JsonKey(name: 'CVE')
-  final double? cve;
-  @JsonKey(name: 'CZK')
-  final double? czk;
-  @JsonKey(name: 'DJF')
-  final double? djf;
-  @JsonKey(name: 'DKK')
-  final double? dkk;
-  @JsonKey(name: 'DOP')
-  final double? dop;
-  @JsonKey(name: 'DZD')
-  final double? dzd;
-  @JsonKey(name: 'EGP')
-  final double? egp;
-  @JsonKey(name: 'ERN')
-  final double? ern;
-  @JsonKey(name: 'ETB')
-  final double? etb;
-  @JsonKey(name: 'EUR')
-  final double? eur;
-  @JsonKey(name: 'FJD')
-  final double? fjd;
-  @JsonKey(name: 'FKP')
-  final double? fkp;
-  @JsonKey(name: 'FOK')
-  final double? fok;
-  @JsonKey(name: 'GBP')
-  final double? gbp;
-  @JsonKey(name: 'GEL')
-  final double? gel;
-  @JsonKey(name: 'GGP')
-  final double? ggp;
-  @JsonKey(name: 'GHS')
-  final double? ghs;
-  @JsonKey(name: 'GIP')
-  final double? gip;
-  @JsonKey(name: 'GMD')
-  final double? gmd;
-  @JsonKey(name: 'GNF')
-  final double? gnf;
-  @JsonKey(name: 'GTQ')
-  final double? gtq;
-  @JsonKey(name: 'GYD')
-  final double? gyd;
-  @JsonKey(name: 'HKD')
-  final double? hkd;
-  @JsonKey(name: 'HNL')
-  final double? hnl;
-  @JsonKey(name: 'HRK')
-  final double? hrk;
-  @JsonKey(name: 'HTG')
-  final double? htg;
-  @JsonKey(name: 'HUF')
-  final double? huf;
-  @JsonKey(name: 'IDR')
-  final double? idr;
-  @JsonKey(name: 'ILS')
-  final double? ils;
-  @JsonKey(name: 'IMP')
-  final double? imp;
-  @JsonKey(name: 'INR')
-  final double? inr;
-  @JsonKey(name: 'IQD')
-  final double? iqd;
-  @JsonKey(name: 'IRR')
-  final double? irr;
-  @JsonKey(name: 'ISK')
-  final double? isk;
-  @JsonKey(name: 'JEP')
-  final double? jep;
-  @JsonKey(name: 'JMD')
-  final double? jmd;
-  @JsonKey(name: 'JOD')
-  final double? jod;
-  @JsonKey(name: 'JPY')
-  final double? jpy;
-  @JsonKey(name: 'KES')
-  final double? kes;
-  @JsonKey(name: 'KGS')
-  final double? kgs;
-  @JsonKey(name: 'KHR')
-  final double? khr;
-  @JsonKey(name: 'KID')
-  final double? kid;
-  @JsonKey(name: 'KMF')
-  final double? kmf;
-  @JsonKey(name: 'KRW')
-  final double? krw;
-  @JsonKey(name: 'KWD')
-  final double? kwd;
-  @JsonKey(name: 'KYD')
-  final double? kyd;
-  @JsonKey(name: 'KZT')
-  final double? kzt;
-  @JsonKey(name: 'LAK')
-  final double? lak;
-  @JsonKey(name: 'LBP')
-  final double? lbp;
-  @JsonKey(name: 'LKR')
-  final double? lkr;
-  @JsonKey(name: 'LRD')
-  final double? lrd;
-  @JsonKey(name: 'LSL')
-  final int? lsl;
-  @JsonKey(name: 'LYD')
-  final double? lyd;
-  @JsonKey(name: 'MAD')
-  final double? mad;
-  @JsonKey(name: 'MDL')
-  final double? mdl;
-  @JsonKey(name: 'MGA')
-  final double? mga;
-  @JsonKey(name: 'MKD')
-  final double? mkd;
-  @JsonKey(name: 'MMK')
-  final double? mmk;
-  @JsonKey(name: 'MNT')
-  final double? mnt;
-  @JsonKey(name: 'MOP')
-  final double? mop;
-  @JsonKey(name: 'MRU')
-  final double? mru;
-  @JsonKey(name: 'MUR')
-  final double? mur;
-  @JsonKey(name: 'MVR')
-  final double? mvr;
-  @JsonKey(name: 'MWK')
-  final double? mwk;
-  @JsonKey(name: 'MXN')
-  final double? mxn;
-  @JsonKey(name: 'MYR')
-  final double? myr;
-  @JsonKey(name: 'MZN')
-  final double? mzn;
-  @JsonKey(name: 'NAD')
-  final int? nad;
-  @JsonKey(name: 'NGN')
-  final double? ngn;
-  @JsonKey(name: 'NIO')
-  final double? nio;
-  @JsonKey(name: 'NOK')
-  final double? nok;
-  @JsonKey(name: 'NPR')
-  final double? npr;
-  @JsonKey(name: 'NZD')
-  final double? nzd;
-  @JsonKey(name: 'OMR')
-  final double? omr;
-  @JsonKey(name: 'PAB')
-  final double? pab;
-  @JsonKey(name: 'PEN')
-  final double? pen;
-  @JsonKey(name: 'PGK')
-  final double? pgk;
-  @JsonKey(name: 'PHP')
-  final double? php;
-  @JsonKey(name: 'PKR')
-  final double? pkr;
-  @JsonKey(name: 'PLN')
-  final double? pln;
-  @JsonKey(name: 'PYG')
-  final double? pyg;
-  @JsonKey(name: 'QAR')
-  final double? qar;
-  @JsonKey(name: 'RON')
-  final double? ron;
-  @JsonKey(name: 'RSD')
-  final double? rsd;
-  @JsonKey(name: 'RUB')
-  final double? rub;
-  @JsonKey(name: 'RWF')
-  final double? rwf;
-  @JsonKey(name: 'SAR')
-  final double? sar;
-  @JsonKey(name: 'SBD')
-  final double? sbd;
-  @JsonKey(name: 'SCR')
-  final double? scr;
-  @JsonKey(name: 'SDG')
-  final double? sdg;
-  @JsonKey(name: 'SEK')
-  final double? sek;
-  @JsonKey(name: 'SGD')
-  final double? sgd;
-  @JsonKey(name: 'SHP')
-  final double? shp;
-  @JsonKey(name: 'SLE')
-  final double? sle;
-  @JsonKey(name: 'SLL')
-  final double? sll;
-  @JsonKey(name: 'SOS')
-  final int? sos;
-  @JsonKey(name: 'SRD')
-  final double? srd;
-  @JsonKey(name: 'SSP')
-  final double? ssp;
-  @JsonKey(name: 'STN')
-  final double? stn;
-  @JsonKey(name: 'SYP')
-  final double? syp;
-  @JsonKey(name: 'SZL')
-  final int? szl;
-  @JsonKey(name: 'THB')
-  final double? thb;
-  @JsonKey(name: 'TJS')
-  final double? tjs;
-  @JsonKey(name: 'TMT')
-  final double? tmt;
-  @JsonKey(name: 'TND')
-  final double? tnd;
-  @JsonKey(name: 'TOP')
-  final double? top;
-  @JsonKey(name: 'TTD')
-  final double? ttd;
-  @JsonKey(name: 'TVD')
-  final double? tvd;
-  @JsonKey(name: 'TWD')
-  final double? twd;
-  @JsonKey(name: 'TZS')
-  final double? tzs;
-  @JsonKey(name: 'UAH')
-  final double? uah;
-  @JsonKey(name: 'UGX')
-  final double? ugx;
+  final double cad;
+
+  @override
   @JsonKey(name: 'USD')
-  final double? usd;
+  final double usd;
+
+  @override
+  @JsonKey(name: 'UAH')
+  final double uah;
+
+  @override
+  @JsonKey(name: 'EUR')
+  final double eur;
+
+  @override
+  @JsonKey(name: 'PLN')
+  final double pln;
+  @override
+  @JsonKey(name: 'AED')
+  final double aed;
+  @override
+  @JsonKey(name: 'AFN')
+  final double afn;
+  @override
+  @JsonKey(name: 'ALL')
+  final double all;
+  @override
+  @JsonKey(name: 'AMD')
+  final double amd;
+  @override
+  @JsonKey(name: 'ANG')
+  final double ang;
+  @override
+  @JsonKey(name: 'AOA')
+  final double aoa;
+  @override
+  @JsonKey(name: 'ARS')
+  final double ars;
+  @override
+  @JsonKey(name: 'AUD')
+  final double aud;
+  @override
+  @JsonKey(name: 'AWG')
+  final double awg;
+  @override
+  @JsonKey(name: 'AZN')
+  final double azn;
+  @override
+  @JsonKey(name: 'BAM')
+  final double bam;
+  @override
+  @JsonKey(name: 'BBD')
+  final double bbd;
+  @override
+  @JsonKey(name: 'BDT')
+  final double bdt;
+  @override
+  @JsonKey(name: 'BGN')
+  final double bgn;
+  @override
+  @JsonKey(name: 'BHD')
+  final double bhd;
+  @override
+  @JsonKey(name: 'BIF')
+  final double bif;
+  @override
+  @JsonKey(name: 'BMD')
+  final double bmd;
+  @override
+  @JsonKey(name: 'BND')
+  final double bnd;
+  @override
+  @JsonKey(name: 'BOB')
+  final double bob;
+  @override
+  @JsonKey(name: 'BRL')
+  final double brl;
+  @override
+  @JsonKey(name: 'BSD')
+  final double bsd;
+  @override
+  @JsonKey(name: 'BTN')
+  final double btn;
+  @override
+  @JsonKey(name: 'BWP')
+  final double bwp;
+  @override
+  @JsonKey(name: 'BYN')
+  final double byn;
+  @override
+  @JsonKey(name: 'BZD')
+  final double bzd;
+  @override
+  @JsonKey(name: 'CDF')
+  final double cdf;
+  @override
+  @JsonKey(name: 'CHF')
+  final double chf;
+  @override
+  @JsonKey(name: 'CLP')
+  final double clp;
+  @override
+  @JsonKey(name: 'CNY')
+  final double cny;
+  @override
+  @JsonKey(name: 'COP')
+  final double cop;
+  @override
+  @JsonKey(name: 'CRC')
+  final double crc;
+  @override
+  @JsonKey(name: 'CUP')
+  final double cup;
+  @override
+  @JsonKey(name: 'CVE')
+  final double cve;
+  @override
+  @JsonKey(name: 'CZK')
+  final double czk;
+  @override
+  @JsonKey(name: 'DJF')
+  final double djf;
+  @override
+  @JsonKey(name: 'DKK')
+  final double dkk;
+  @override
+  @JsonKey(name: 'DOP')
+  final double dop;
+  @override
+  @JsonKey(name: 'DZD')
+  final double dzd;
+  @override
+  @JsonKey(name: 'EGP')
+  final double egp;
+  @override
+  @JsonKey(name: 'ERN')
+  final double ern;
+  @override
+  @JsonKey(name: 'ETB')
+  final double etb;
+  @override
+  @JsonKey(name: 'FJD')
+  final double fjd;
+  @override
+  @JsonKey(name: 'FKP')
+  final double fkp;
+  @override
+  @JsonKey(name: 'FOK')
+  final double fok;
+  @override
+  @JsonKey(name: 'GBP')
+  final double gbp;
+  @override
+  @JsonKey(name: 'GEL')
+  final double gel;
+  @override
+  @JsonKey(name: 'GGP')
+  final double ggp;
+  @override
+  @JsonKey(name: 'GHS')
+  final double ghs;
+  @override
+  @JsonKey(name: 'GIP')
+  final double gip;
+  @override
+  @JsonKey(name: 'GMD')
+  final double gmd;
+  @override
+  @JsonKey(name: 'GNF')
+  final double gnf;
+  @override
+  @JsonKey(name: 'GTQ')
+  final double gtq;
+  @override
+  @JsonKey(name: 'GYD')
+  final double gyd;
+  @override
+  @JsonKey(name: 'HNL')
+  final double hnl;
+  @override
+  @JsonKey(name: 'HRK')
+  final double hrk;
+  @override
+  @JsonKey(name: 'HTG')
+  final double htg;
+  @override
+  @JsonKey(name: 'HUF')
+  final double huf;
+  @override
+  @JsonKey(name: 'IDR')
+  final double idr;
+  @override
+  @JsonKey(name: 'ILS')
+  final double ils;
+  @override
+  @JsonKey(name: 'IMP')
+  final double imp;
+  @override
+  @JsonKey(name: 'INR')
+  final double inr;
+  @override
+  @JsonKey(name: 'IQD')
+  final double iqd;
+  @override
+  @JsonKey(name: 'IRR')
+  final double irr;
+  @override
+  @JsonKey(name: 'ISK')
+  final double isk;
+  @override
+  @JsonKey(name: 'JEP')
+  final double jep;
+  @override
+  @JsonKey(name: 'JMD')
+  final double jmd;
+  @override
+  @JsonKey(name: 'JOD')
+  final double jod;
+  @override
+  @JsonKey(name: 'JPY')
+  final double jpy;
+  @override
+  @JsonKey(name: 'KES')
+  final double kes;
+  @override
+  @JsonKey(name: 'KGS')
+  final double kgs;
+  @override
+  @JsonKey(name: 'KHR')
+  final double khr;
+  @override
+  @JsonKey(name: 'KID')
+  final double kid;
+  @override
+  @JsonKey(name: 'KMF')
+  final double kmf;
+  @override
+  @JsonKey(name: 'KRW')
+  final double krw;
+  @override
+  @JsonKey(name: 'KWD')
+  final double kwd;
+  @override
+  @JsonKey(name: 'KYD')
+  final double kyd;
+  @override
+  @JsonKey(name: 'KZT')
+  final double kzt;
+  @override
+  @JsonKey(name: 'LAK')
+  final double lak;
+  @override
+  @JsonKey(name: 'LBP')
+  final double lbp;
+  @override
+  @JsonKey(name: 'LKR')
+  final double lkr;
+  @override
+  @JsonKey(name: 'LRD')
+  final double lrd;
+  @override
+  @JsonKey(name: 'LSL')
+  final double lsl;
+  @override
+  @JsonKey(name: 'LYD')
+  final double lyd;
+  @override
+  @JsonKey(name: 'MAD')
+  final double mad;
+  @override
+  @JsonKey(name: 'MDL')
+  final double mdl;
+  @override
+  @JsonKey(name: 'MGA')
+  final double mga;
+  @override
+  @JsonKey(name: 'MKD')
+  final double mkd;
+  @override
+  @JsonKey(name: 'MMK')
+  final double mmk;
+  @override
+  @JsonKey(name: 'MNT')
+  final double mnt;
+  @override
+  @JsonKey(name: 'MOP')
+  final double mop;
+  @override
+  @JsonKey(name: 'MRU')
+  final double mru;
+  @override
+  @JsonKey(name: 'MUR')
+  final double mur;
+  @override
+  @JsonKey(name: 'MVR')
+  final double mvr;
+  @override
+  @JsonKey(name: 'MWK')
+  final double mwk;
+  @override
+  @JsonKey(name: 'MXN')
+  final double mxn;
+  @override
+  @JsonKey(name: 'MYR')
+  final double myr;
+  @override
+  @JsonKey(name: 'MZN')
+  final double mzn;
+  @override
+  @JsonKey(name: 'NAD')
+  final double nad;
+  @override
+  @JsonKey(name: 'NGN')
+  final double ngn;
+  @override
+  @JsonKey(name: 'NIO')
+  final double nio;
+  @override
+  @JsonKey(name: 'NOK')
+  final double nok;
+  @override
+  @JsonKey(name: 'NPR')
+  final double npr;
+  @override
+  @JsonKey(name: 'NZD')
+  final double nzd;
+  @override
+  @JsonKey(name: 'OMR')
+  final double omr;
+  @override
+  @JsonKey(name: 'PAB')
+  final double pab;
+  @override
+  @JsonKey(name: 'PEN')
+  final double pen;
+  @override
+  @JsonKey(name: 'PGK')
+  final double pgk;
+  @override
+  @JsonKey(name: 'PHP')
+  final double php;
+  @override
+  @JsonKey(name: 'PKR')
+  final double pkr;
+  @override
+  @JsonKey(name: 'PYG')
+  final double pyg;
+  @override
+  @JsonKey(name: 'QAR')
+  final double qar;
+  @override
+  @JsonKey(name: 'RON')
+  final double ron;
+  @override
+  @JsonKey(name: 'RSD')
+  final double rsd;
+  @override
+  @JsonKey(name: 'RUB')
+  final double rub;
+  @override
+  @JsonKey(name: 'RWF')
+  final double rwf;
+  @override
+  @JsonKey(name: 'SAR')
+  final double sar;
+  @override
+  @JsonKey(name: 'SBD')
+  final double sbd;
+  @override
+  @JsonKey(name: 'SCR')
+  final double scr;
+  @override
+  @JsonKey(name: 'SDG')
+  final double sdg;
+  @override
+  @JsonKey(name: 'SEK')
+  final double sek;
+  @override
+  @JsonKey(name: 'SGD')
+  final double sgd;
+  @override
+  @JsonKey(name: 'SHP')
+  final double shp;
+  @override
+  @JsonKey(name: 'SLE')
+  final double sle;
+  @override
+  @JsonKey(name: 'SLL')
+  final double sll;
+  @override
+  @JsonKey(name: 'SOS')
+  final double sos;
+  @override
+  @JsonKey(name: 'SRD')
+  final double srd;
+  @override
+  @JsonKey(name: 'SSP')
+  final double ssp;
+  @override
+  @JsonKey(name: 'STN')
+  final double stn;
+  @override
+  @JsonKey(name: 'SYP')
+  final double syp;
+  @override
+  @JsonKey(name: 'SZL')
+  final double szl;
+  @override
+  @JsonKey(name: 'THB')
+  final double thb;
+  @override
+  @JsonKey(name: 'TJS')
+  final double tjs;
+  @override
+  @JsonKey(name: 'TMT')
+  final double tmt;
+  @override
+  @JsonKey(name: 'TND')
+  final double tnd;
+  @override
+  @JsonKey(name: 'TOP')
+  final double top;
+  @override
+  @JsonKey(name: 'TTD')
+  final double ttd;
+  @override
+  @JsonKey(name: 'TVD')
+  final double tvd;
+  @override
+  @JsonKey(name: 'TWD')
+  final double twd;
+  @override
+  @JsonKey(name: 'TZS')
+  final double tzs;
+  @override
+  @JsonKey(name: 'UGX')
+  final double ugx;
+  @override
   @JsonKey(name: 'UYU')
-  final double? uyu;
+  final double uyu;
+  @override
   @JsonKey(name: 'UZS')
-  final double? uzs;
+  final double uzs;
+  @override
   @JsonKey(name: 'VES')
-  final double? ves;
+  final double ves;
+  @override
   @JsonKey(name: 'VND')
-  final double? vnd;
+  final double vnd;
+  @override
   @JsonKey(name: 'VUV')
-  final double? vuv;
+  final double vuv;
+  @override
   @JsonKey(name: 'WST')
-  final double? wst;
+  final double wst;
+  @override
   @JsonKey(name: 'XAF')
-  final double? xaf;
+  final double xaf;
+  @override
   @JsonKey(name: 'XCD')
-  final double? xcd;
+  final double xcd;
+  @override
   @JsonKey(name: 'XDR')
-  final double? xdr;
+  final double xdr;
+  @override
   @JsonKey(name: 'XOF')
-  final double? xof;
+  final double xof;
+  @override
   @JsonKey(name: 'XPF')
-  final double? xpf;
+  final double xpf;
+  @override
   @JsonKey(name: 'YER')
-  final double? yer;
+  final double yer;
+  @override
   @JsonKey(name: 'ZAR')
-  final int? zar;
+  final double zar;
+  @override
   @JsonKey(name: 'ZMW')
-  final double? zmw;
+  final double zmw;
+  @override
   @JsonKey(name: 'ZWL')
-  final double? zwl;
+  final double zwl;
 
   @override
   String toString() {
@@ -555,7 +881,6 @@ class RatesResponse {
         'gnf: $gnf, '
         'gtq: $gtq, '
         'gyd: $gyd, '
-        'hkd: $hkd, '
         'hnl: $hnl, '
         'hrk: $hrk, '
         'htg: $htg, '
@@ -664,10 +989,8 @@ class RatesResponse {
         ')';
   }
 
-  Map<String, dynamic> toJson() => _$RatesResponseToJson(this);
-
   RatesResponse copyWith({
-    int? cad,
+    double? cad,
     double? aed,
     double? afn,
     double? all,
@@ -751,7 +1074,7 @@ class RatesResponse {
     double? lbp,
     double? lkr,
     double? lrd,
-    int? lsl,
+    double? lsl,
     double? lyd,
     double? mad,
     double? mdl,
@@ -767,7 +1090,7 @@ class RatesResponse {
     double? mxn,
     double? myr,
     double? mzn,
-    int? nad,
+    double? nad,
     double? ngn,
     double? nio,
     double? nok,
@@ -795,12 +1118,12 @@ class RatesResponse {
     double? shp,
     double? sle,
     double? sll,
-    int? sos,
+    double? sos,
     double? srd,
     double? ssp,
     double? stn,
     double? syp,
-    int? szl,
+    double? szl,
     double? thb,
     double? tjs,
     double? tmt,
@@ -825,7 +1148,7 @@ class RatesResponse {
     double? xof,
     double? xpf,
     double? yer,
-    int? zar,
+    double? zar,
     double? zmw,
     double? zwl,
   }) {
@@ -885,7 +1208,6 @@ class RatesResponse {
       gnf: gnf ?? this.gnf,
       gtq: gtq ?? this.gtq,
       gyd: gyd ?? this.gyd,
-      hkd: hkd ?? this.hkd,
       hnl: hnl ?? this.hnl,
       hrk: hrk ?? this.hrk,
       htg: htg ?? this.htg,
@@ -1060,7 +1382,6 @@ class RatesResponse {
       gnf.hashCode ^
       gtq.hashCode ^
       gyd.hashCode ^
-      hkd.hashCode ^
       hnl.hashCode ^
       hrk.hashCode ^
       htg.hashCode ^

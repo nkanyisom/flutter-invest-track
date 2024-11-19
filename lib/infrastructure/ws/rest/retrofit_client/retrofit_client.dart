@@ -3,10 +3,13 @@ import 'package:investtrack/infrastructure/ws/models/responses/authentication_re
 import 'package:investtrack/infrastructure/ws/models/responses/authentication_response/sign_in_response/sign_in_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/authentication_response/sign_up_response/sign_up_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/authentication_response/verification_response.dart';
+import 'package:investtrack/infrastructure/ws/models/responses/change_percentage_response/change_percentage_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/created_investment_response/created_investment_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/delete_account_response/delete_account_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/delete_investment_response/delete_investment_response.dart';
+import 'package:investtrack/infrastructure/ws/models/responses/exchange_rate_response/exchange_rate_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/investments_response/investments_response.dart';
+import 'package:investtrack/infrastructure/ws/models/responses/price_change_response/price_change_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/sign_out_response/sign_out_response.dart';
 import 'package:investtrack/infrastructure/ws/models/responses/updated_investment_response/updated_investment_response.dart';
 import 'package:models/models.dart';
@@ -121,5 +124,23 @@ abstract class RetrofitClient implements RestClient {
   @DELETE('delete-user')
   Future<DeleteAccountResponse> deleteAccount(
     @Query('investmentId') String investmentId,
+  );
+
+  @override
+  @GET('https://api.exchangerate-api.com/v4/latest/{fromCurrency}')
+  Future<ExchangeRateResponse> getExchangeRate(
+    @Path('fromCurrency') String fromCurrency,
+  );
+
+  @override
+  @GET('change')
+  Future<PriceChangeResponse> fetchPriceChange(
+    @Query('ticker') String ticker,
+  );
+
+  @override
+  @GET('change-percentage')
+  Future<ChangePercentageResponse> fetchChangePercentage(
+    @Query('ticker') String ticker,
   );
 }

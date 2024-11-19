@@ -1,16 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:models/models.dart';
 
 part 'change_percentage_response.g.dart';
 
 @JsonSerializable()
-class ChangePercentageResponse {
+class ChangePercentageResponse implements ChangePercentage {
   const ChangePercentageResponse({required this.changePercentage});
 
   factory ChangePercentageResponse.fromJson(Map<String, dynamic> json) {
     return _$ChangePercentageResponseFromJson(json);
   }
 
+  @override
   final double changePercentage;
 
   @override

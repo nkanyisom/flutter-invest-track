@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/router/app_route.dart';
-import 'package:investtrack/ui/investments/add_edit_investment_page.dart';
+import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
 import 'package:investtrack/ui/investments/investments_page.dart';
 import 'package:investtrack/ui/privacy/privacy_policy_page.dart';
 import 'package:investtrack/ui/sign_in/sign_in_page.dart';

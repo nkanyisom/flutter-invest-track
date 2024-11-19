@@ -23,6 +23,8 @@ import 'package:investtrack/application_services/blocs/sign_in/bloc/sign_in_bloc
     as _i141;
 import 'package:investtrack/application_services/blocs/sign_up/bloc/sign_up_bloc.dart'
     as _i445;
+import 'package:investtrack/application_services/repositories/exchange_rate_repository_impl.dart'
+    as _i741;
 import 'package:investtrack/application_services/repositories/investments_repository_impl.dart'
     as _i233;
 import 'package:investtrack/application_services/repositories/settings_repository_impl.dart'
@@ -33,6 +35,8 @@ import 'package:investtrack/di/preferences_module.dart' as _i270;
 import 'package:investtrack/di/rest_client_module.dart' as _i939;
 import 'package:investtrack/di/retrofit_http_client_module.dart' as _i825;
 import 'package:investtrack/di/user_repository_module.dart' as _i280;
+import 'package:investtrack/domain_services/exchange_rate_repository.dart'
+    as _i30;
 import 'package:investtrack/domain_services/investments_repository.dart'
     as _i305;
 import 'package:investtrack/domain_services/settings_repository.dart' as _i113;
@@ -78,6 +82,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => restClientModule.getRestClient(gh<_i361.Dio>()));
     gh.lazySingleton<_i651.RetrofitClient>(
         () => retrofitHttpClientModule.getRetrofitHttpClient(gh<_i361.Dio>()));
+    gh.factory<_i30.ExchangeRateRepository>(
+        () => _i741.ExchangeRateRepositoryImpl(gh<_i669.RestClient>()));
     gh.lazySingleton<_i223.AuthenticationRepository>(
         () => authenticationRepositoryModule.getAuthenticationRepository(
               gh<_i651.RetrofitClient>(),
@@ -99,6 +105,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i233.InvestmentsRepositoryImpl(gh<_i669.RestClient>()));
     gh.factory<_i91.InvestmentsBloc>(() => _i91.InvestmentsBloc(
           gh<_i305.InvestmentsRepository>(),
+          gh<_i30.ExchangeRateRepository>(),
           gh<_i636.AuthenticationBloc>(),
         ));
     return this;

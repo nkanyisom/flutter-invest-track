@@ -1,36 +1,44 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:models/models.dart';
 
 import 'rates_response.dart';
 
 part 'exchange_rate_response.g.dart';
 
 @JsonSerializable()
-class ExchangeRateResponse {
+class ExchangeRateResponse implements ExchangeRate {
   const ExchangeRateResponse({
+    required this.rates,
     this.provider,
     this.warningUpgradeToV6,
     this.terms,
     this.base,
     this.date,
     this.timeLastUpdated,
-    this.ratesResponse,
   });
 
   factory ExchangeRateResponse.fromJson(Map<String, dynamic> json) {
     return _$ExchangeRateResponseFromJson(json);
   }
 
+  @override
+  @JsonKey(name: 'rates')
+  final RatesResponse rates;
+  @override
   final String? provider;
+  @override
   @JsonKey(name: 'WARNING_UPGRADE_TO_V6')
   final String? warningUpgradeToV6;
+  @override
   final String? terms;
+  @override
   final String? base;
+  @override
   final String? date;
+  @override
   @JsonKey(name: 'time_last_updated')
   final int? timeLastUpdated;
-  @JsonKey(name: 'rates')
-  final RatesResponse? ratesResponse;
 
   @override
   String toString() {
@@ -41,7 +49,7 @@ class ExchangeRateResponse {
         'base: $base, '
         'date: $date, '
         'timeLastUpdated: $timeLastUpdated, '
-        'ratesResponse: $ratesResponse,'
+        'ratesResponse: $rates,'
         ')';
   }
 
@@ -63,7 +71,7 @@ class ExchangeRateResponse {
       base: base ?? this.base,
       date: date ?? this.date,
       timeLastUpdated: timeLastUpdated ?? this.timeLastUpdated,
-      ratesResponse: rates ?? this.ratesResponse,
+      rates: rates ?? this.rates,
     );
   }
 
@@ -84,5 +92,5 @@ class ExchangeRateResponse {
       base.hashCode ^
       date.hashCode ^
       timeLastUpdated.hashCode ^
-      ratesResponse.hashCode;
+      rates.hashCode;
 }

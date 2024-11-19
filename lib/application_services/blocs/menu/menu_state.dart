@@ -71,6 +71,5 @@ final class LoadingMenuState extends MenuState {
       );
 
   @override
-  String toString() =>
-      'LoadingMenuState(language: $language)';
+  String toString() => 'LoadingMenuState(language: $language)';
 }

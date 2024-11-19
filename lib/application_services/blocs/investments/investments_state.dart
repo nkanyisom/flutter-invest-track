@@ -88,14 +88,51 @@ final class CurrentValueLoaded extends ValueLoadingState {
   final double currentPrice;
 }
 
-final class PurchaseValueLoaded extends SelectedInvestmentState {
-  const PurchaseValueLoaded({
-    required this.purchasePrice,
-    required this.currentPrice,
+final class ExchangeRateLoaded extends CurrentValueLoaded {
+  const ExchangeRateLoaded({
+    required this.exchangeRate,
+    required super.currentPrice,
     required super.selectedInvestment,
     super.investments,
   });
 
+  final double exchangeRate;
+}
+
+final class InvestmentUpdated extends SelectedInvestmentState {
+  const InvestmentUpdated({
+    required this.purchasePrice,
+    required this.currentPrice,
+    required super.selectedInvestment,
+    required this.exchangeRate,
+    required super.investments,
+    this.priceChange = 0,
+    this.changePercentage = 0,
+  });
+
   final double purchasePrice;
   final double currentPrice;
+  final double exchangeRate;
+  final double priceChange;
+  final double changePercentage;
+
+  InvestmentUpdated copyWith({
+    double? purchasePrice,
+    double? currentPrice,
+    double? exchangeRate,
+    double? priceChange,
+    double? changePercentage,
+    Investment? selectedInvestment,
+    List<Investment>? investments,
+  }) {
+    return InvestmentUpdated(
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      currentPrice: currentPrice ?? this.currentPrice,
+      exchangeRate: exchangeRate ?? this.exchangeRate,
+      priceChange: priceChange ?? this.priceChange,
+      changePercentage: changePercentage ?? this.changePercentage,
+      selectedInvestment: selectedInvestment ?? this.selectedInvestment,
+      investments: investments ?? this.investments,
+    );
+  }
 }

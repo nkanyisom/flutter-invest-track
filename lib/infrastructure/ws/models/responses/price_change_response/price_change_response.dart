@@ -1,16 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:models/models.dart';
 
 part 'price_change_response.g.dart';
 
 @JsonSerializable()
-class PriceChangeResponse {
+class PriceChangeResponse implements PriceChange {
   factory PriceChangeResponse.fromJson(Map<String, dynamic> json) {
     return _$PriceChangeResponseFromJson(json);
   }
 
   const PriceChangeResponse({required this.priceChange});
 
+  @override
   final double priceChange;
 
   @override
@@ -30,7 +32,8 @@ class PriceChangeResponse {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     if (other is! PriceChangeResponse) return false;
-    final mapEquals = const DeepCollectionEquality().equals;
+    final bool Function(Object? e1, Object? e2) mapEquals =
+        const DeepCollectionEquality().equals;
     return mapEquals(other.toJson(), toJson());
   }
 

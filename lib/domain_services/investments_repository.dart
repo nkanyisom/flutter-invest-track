@@ -10,4 +10,8 @@ abstract interface class InvestmentsRepository {
   Future<Investment> update(Investment investment);
 
   Future<MessageResponse> delete(Investment investment);
+
+  Future<double> fetchPriceChange(String ticker);
+
+  Future<double> fetchChangePercentage(String ticker);
 }

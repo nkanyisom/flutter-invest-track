@@ -36,4 +36,18 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
       return response.investment;
     });
   }
+
+  @override
+  Future<double> fetchPriceChange(String ticker) {
+    return _restClient.fetchPriceChange(ticker).then(
+          (PriceChange response) => response.priceChange,
+        );
+  }
+
+  @override
+  Future<double> fetchChangePercentage(String ticker) {
+    return _restClient.fetchChangePercentage(ticker).then(
+          (ChangePercentage response) => response.changePercentage,
+        );
+  }
 }

@@ -59,8 +59,7 @@ class _AppState extends State<App> {
           ),
           BlocProvider<MenuBloc>(
             create: (_) {
-              return widget.menuBloc
-                ..add(const LoadingInitialMenuStateEvent());
+              return widget.menuBloc..add(const LoadingInitialMenuStateEvent());
             },
           ),
         ],

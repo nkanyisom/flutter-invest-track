@@ -1,11 +1,15 @@
 library;
 
+export 'src/abstract/change_percentage.dart';
 export 'src/abstract/code_response.dart';
-export 'src/abstract/message_response.dart';
+export 'src/abstract/exchange_rate.dart';
 export 'src/abstract/investment_result.dart';
 export 'src/abstract/investments.dart';
 export 'src/abstract/login_response.dart';
 export 'src/abstract/logout_response.dart';
+export 'src/abstract/message_response.dart';
+export 'src/abstract/price_change.dart';
+export 'src/abstract/rates.dart';
 export 'src/abstract/register_response.dart';
 export 'src/abstract/verification.dart';
 export 'src/code.dart';
