@@ -44,8 +44,8 @@ class _AppViewState extends State<AppView> {
       theme: _isDarkTheme
           ? ThemeData.dark().copyWith(
               colorScheme: const ColorScheme.dark(
-                primary: Colors.teal,
-                secondary: Colors.amber,
+                primary: Color(0xFF2196F3), // A darker shade of blue
+                secondary: Color(0xFFFDD835), // A warm accent color
               ),
               textTheme: TextTheme(
                 headlineLarge: const TextStyle(

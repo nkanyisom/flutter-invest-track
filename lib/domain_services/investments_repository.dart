@@ -1,9 +1,14 @@
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:models/models.dart';
 
 abstract interface class InvestmentsRepository {
   const InvestmentsRepository();
 
-  Future<List<Investment>> getInvestments({required String userId, int? page});
+  Future<Investments> getInvestments({
+    required String userId,
+    int page = constants.pageOffset,
+    int investmentsPerPage = constants.itemsPerPage,
+  });
 
   Future<Investment> create(Investment investment);
 

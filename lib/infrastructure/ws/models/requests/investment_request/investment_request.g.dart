@@ -28,5 +28,6 @@ Map<String, dynamic> _$InvestmentRequestToJson(InvestmentRequest instance) =>
       'gainOrLossUsd': instance.gainOrLossUsd,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
+      'currentPrice': instance.currentPrice,
       'hashCode': instance.hashCode,
     };

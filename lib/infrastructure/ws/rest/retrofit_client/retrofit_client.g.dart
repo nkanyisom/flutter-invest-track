@@ -251,14 +251,15 @@ class _RetrofitClient implements RetrofitClient {
   @override
   Future<InvestmentsResponse> getInvestments(
     String userId,
-    int? page,
+    int page,
+    int itemsPerPage,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'userId': userId,
       r'page': page,
+      r'itemsPerPage': itemsPerPage,
     };
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<InvestmentsResponse>(Options(

@@ -99,7 +99,8 @@ abstract class RetrofitClient implements RestClient {
   @GET('investments')
   Future<InvestmentsResponse> getInvestments(
     @Query('userId') String userId,
-    @Query('page') int? page,
+    @Query('page') int page,
+    @Query('itemsPerPage') int itemsPerPage,
   );
 
   @override

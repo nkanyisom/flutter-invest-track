@@ -2,54 +2,22 @@ part of 'investments_bloc.dart';
 
 @immutable
 sealed class InvestmentsState {
-  const InvestmentsState({this.investments = const <Investment>[]});
+  const InvestmentsState({
+    this.investments = const <Investment>[],
+  });
 
   final List<Investment> investments;
 }
 
-final class InvestmentsInitial extends InvestmentsState {
-  const InvestmentsInitial();
-}
-
-final class CreatingInvestment extends InvestmentsState {
-  const CreatingInvestment({super.investments});
-}
-
-abstract class SubmittingInvestment extends InvestmentsState {
-  const SubmittingInvestment({
-    required this.investmentId,
-    required super.investments,
-  });
-
-  final int investmentId;
-}
-
-final class UpdatingInvestment extends SubmittingInvestment {
-  const UpdatingInvestment({
-    required super.investmentId,
-    required super.investments,
-  });
-}
-
-final class InvestmentDeleting extends SubmittingInvestment {
-  const InvestmentDeleting({
-    required super.investmentId,
-    required super.investments,
-  });
-}
-
-final class InvestmentSubmitted extends InvestmentsState {
-  const InvestmentSubmitted({super.investments});
-}
-
-final class InvestmentDeleted extends InvestmentsState {
-  const InvestmentDeleted({required this.message, super.investments});
-
-  final String message;
+final class InvestmentsLoading extends InvestmentsState {
+  const InvestmentsLoading();
 }
 
 final class InvestmentsError extends InvestmentsState {
-  const InvestmentsError({required this.error, super.investments});
+  const InvestmentsError({
+    required this.error,
+    super.investments,
+  });
 
   final String error;
 }
@@ -59,13 +27,96 @@ final class UnauthenticatedInvestmentsAccessState extends InvestmentsError {
 }
 
 final class InvestmentsLoaded extends InvestmentsState {
-  const InvestmentsLoaded({super.investments});
+  const InvestmentsLoaded({
+    required this.hasReachedMax,
+    super.investments,
+    this.isLoadingMore = false,
+  });
+
+  final bool isLoadingMore;
+  final bool hasReachedMax;
+
+  InvestmentsLoaded copyWith({
+    bool? isLoadingMore,
+    bool? hasReachedMax,
+  }) {
+    return InvestmentsLoaded(
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
 }
 
-final class SelectedInvestmentState extends InvestmentsState {
+final class InvestmentsUpdated extends InvestmentsLoaded {
+  const InvestmentsUpdated({
+    required super.hasReachedMax,
+    required super.investments,
+    super.isLoadingMore = false,
+  });
+}
+
+final class CreatingInvestment extends InvestmentsLoaded {
+  const CreatingInvestment({
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+}
+
+base class SubmittingInvestment extends InvestmentsLoaded {
+  const SubmittingInvestment({
+    required this.investmentId,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+
+  final int investmentId;
+}
+
+final class UpdatingInvestment extends SubmittingInvestment {
+  const UpdatingInvestment({
+    required super.investmentId,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+}
+
+final class InvestmentDeleting extends SubmittingInvestment {
+  const InvestmentDeleting({
+    required super.investmentId,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+}
+
+final class InvestmentSubmitted extends InvestmentsLoaded {
+  const InvestmentSubmitted({
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+}
+
+final class InvestmentDeleted extends InvestmentsLoaded {
+  const InvestmentDeleted({
+    required super.investments,
+    required this.message,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+
+  final String message;
+}
+
+final class SelectedInvestmentState extends InvestmentsLoaded {
   const SelectedInvestmentState({
     required this.selectedInvestment,
-    super.investments,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
   });
 
   final Investment selectedInvestment;
@@ -74,7 +125,9 @@ final class SelectedInvestmentState extends InvestmentsState {
 final class ValueLoadingState extends SelectedInvestmentState {
   const ValueLoadingState({
     required super.selectedInvestment,
-    super.investments,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
   });
 }
 
@@ -82,7 +135,9 @@ final class CurrentValueLoaded extends ValueLoadingState {
   const CurrentValueLoaded({
     required this.currentPrice,
     required super.selectedInvestment,
-    super.investments,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
   });
 
   final double currentPrice;
@@ -93,7 +148,9 @@ final class ExchangeRateLoaded extends CurrentValueLoaded {
     required this.exchangeRate,
     required super.currentPrice,
     required super.selectedInvestment,
-    super.investments,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
   });
 
   final double exchangeRate;
@@ -106,6 +163,8 @@ final class InvestmentUpdated extends SelectedInvestmentState {
     required super.selectedInvestment,
     required this.exchangeRate,
     required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
     this.priceChange = 0,
     this.changePercentage = 0,
   });
@@ -116,7 +175,10 @@ final class InvestmentUpdated extends SelectedInvestmentState {
   final double priceChange;
   final double changePercentage;
 
+  @override
   InvestmentUpdated copyWith({
+    bool? isLoadingMore,
+    bool? hasReachedMax,
     double? purchasePrice,
     double? currentPrice,
     double? exchangeRate,
@@ -126,6 +188,8 @@ final class InvestmentUpdated extends SelectedInvestmentState {
     List<Investment>? investments,
   }) {
     return InvestmentUpdated(
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       purchasePrice: purchasePrice ?? this.purchasePrice,
       currentPrice: currentPrice ?? this.currentPrice,
       exchangeRate: exchangeRate ?? this.exchangeRate,

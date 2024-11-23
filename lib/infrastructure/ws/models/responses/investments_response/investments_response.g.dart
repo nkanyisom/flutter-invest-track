@@ -11,7 +11,8 @@ InvestmentsResponse _$InvestmentsResponseFromJson(Map<String, dynamic> json) =>
       investments: (json['investments'] as List<dynamic>)
           .map((e) => InvestmentResponse.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalPages: (json['totalPages'] as num?)?.toInt(),
+      totalPages: (json['totalPages'] as num).toInt(),
+      currentPage: (json['currentPage'] as num).toInt(),
     );
 
 Map<String, dynamic> _$InvestmentsResponseToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$InvestmentsResponseToJson(
     <String, dynamic>{
       'investments': instance.investments,
       'totalPages': instance.totalPages,
+      'currentPage': instance.currentPage,
     };

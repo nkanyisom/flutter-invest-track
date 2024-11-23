@@ -11,6 +11,7 @@ class InvestmentsResponse implements Investments {
   const InvestmentsResponse({
     required this.investments,
     required this.totalPages,
+    required this.currentPage,
   });
 
   factory InvestmentsResponse.fromJson(Map<String, dynamic> json) {
@@ -20,8 +21,13 @@ class InvestmentsResponse implements Investments {
   @override
   @JsonKey(name: 'investments')
   final List<InvestmentResponse> investments;
+  @override
   @JsonKey(name: 'totalPages')
-  final int? totalPages;
+  final int totalPages;
+
+  @override
+  @JsonKey(name: 'currentPage')
+  final int currentPage;
 
   @override
   String toString() {
@@ -29,6 +35,7 @@ class InvestmentsResponse implements Investments {
       return 'InvestmentsResponse('
           'investments: $investments, '
           'totalPages: $totalPages,'
+          'currentPage: $currentPage,'
           ')';
     } else {
       return super.toString();
@@ -40,10 +47,12 @@ class InvestmentsResponse implements Investments {
   InvestmentsResponse copyWith({
     List<InvestmentResponse>? investments,
     int? totalPages,
+    int? currentPage,
   }) {
     return InvestmentsResponse(
       investments: investments ?? this.investments,
       totalPages: totalPages ?? this.totalPages,
+      currentPage: currentPage ?? this.currentPage,
     );
   }
 

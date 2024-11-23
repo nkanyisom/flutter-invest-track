@@ -15,18 +15,20 @@ class Investment {
     required this.description,
     required this.quantity,
     required this.purchaseDate,
-    this.slug = '',
+    required this.companyName,
+    this.slug,
     this.id = 0,
-    this.companyName = '',
     this.totalValueOnPurchase,
-    this.isPurchased = false,
+    bool? isPurchased,
     this.purchasePrice,
     this.totalCurrentValue,
     this.gainOrLossCad,
     this.gainOrLossUsd,
     this.createdAt,
     this.updatedAt,
-  });
+    this.currentPrice,
+    // Initialize based on quantity.
+  }) : isPurchased = isPurchased ?? quantity > 0;
 
   const Investment.base({
     required this.ticker,
@@ -48,6 +50,7 @@ class Investment {
         gainOrLossUsd = null,
         createdAt = null,
         updatedAt = null,
+        currentPrice = null,
         userId = '';
 
   const Investment.create({
@@ -62,7 +65,7 @@ class Investment {
     required this.purchaseDate,
     required this.userId,
   })  : id = 0,
-        slug = '',
+        slug = null,
         isPurchased = quantity > 0,
         totalValueOnPurchase = null,
         purchasePrice = null,
@@ -70,6 +73,7 @@ class Investment {
         gainOrLossCad = null,
         gainOrLossUsd = null,
         createdAt = null,
+        currentPrice = null,
         updatedAt = null;
 
   factory Investment.fromJson(Map<String, dynamic> json) =>
@@ -80,7 +84,7 @@ class Investment {
   @JsonKey(name: 'id')
   final int id;
   @JsonKey(name: 'slug')
-  final String slug;
+  final String? slug;
   @JsonKey(name: 'ticker')
   final String ticker;
   @JsonKey(name: 'type')
@@ -115,6 +119,7 @@ class Investment {
   final DateTime? createdAt;
   @JsonKey(name: 'updatedAt')
   final DateTime? updatedAt;
+  final double? currentPrice;
 
   Investment copyWith({
     String? userId,
@@ -137,6 +142,7 @@ class Investment {
     double? gainOrLossUsd,
     DateTime? createdAt,
     DateTime? updatedAt,
+    double? currentPrice,
   }) =>
       Investment(
         userId: userId ?? this.userId,
@@ -159,6 +165,7 @@ class Investment {
         gainOrLossUsd: gainOrLossUsd ?? this.gainOrLossUsd,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        currentPrice: currentPrice ?? this.currentPrice,
       );
 
   Map<String, dynamic> toJson() => _$InvestmentToJson(this);

@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:models/models.dart';
 
 @Injectable(as: InvestmentsRepository)
@@ -9,10 +10,12 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
   final RestClient _restClient;
 
   @override
-  Future<List<Investment>> getInvestments({required String userId, int? page}) {
-    return _restClient.getInvestments(userId, page).then(
-          (Investments investmentsResponse) => investmentsResponse.investments,
-        );
+  Future<Investments> getInvestments({
+    required String userId,
+    int page = constants.pageOffset,
+    int investmentsPerPage = constants.itemsPerPage,
+  }) {
+    return _restClient.getInvestments(userId, page, investmentsPerPage);
   }
 
   @override

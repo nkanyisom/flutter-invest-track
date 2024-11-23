@@ -11,8 +11,8 @@ import 'package:investtrack/domain_services/exchange_rate_repository.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
-import 'package:investtrack/ui/investments/investment_widget.dart';
-import 'package:investtrack/ui/investments/shimmer_investment.dart';
+import 'package:investtrack/ui/investments/investment_tile/investment_tile.dart';
+import 'package:investtrack/ui/investments/investment_tile/shimmer_investment.dart';
 import 'package:investtrack/ui/menu/app_drawer.dart';
 import 'package:models/models.dart';
 
@@ -65,88 +65,136 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: <Widget>[
-            Hero(
-              tag: 'appLogo',
-              child: Image.asset(
-                'assets/images/logo.png',
-                width: 36,
-                height: 36,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(translate('title')),
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            colorScheme.primaryContainer.withOpacity(0.8),
+            colorScheme.secondary,
           ],
         ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      drawer: BlocListener<MenuBloc, MenuState>(
-        listener: (_, MenuState state) {
-          if (state is FeedbackState) {
-            _showFeedbackUi();
-          } else if (state is FeedbackSent) {
-            _notifyFeedbackSent();
-          }
-        },
-        child: const AppDrawer(),
-      ),
-      body: BlocConsumer<InvestmentsBloc, InvestmentsState>(
-        listener: _handleInvestmentsState,
-        builder: (BuildContext context, InvestmentsState state) {
-          if (state is InvestmentsInitial) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is InvestmentsError) {
-            return Center(child: Text('Error: ${state.error}'));
-          } else if (state.investments.isEmpty) {
-            return const Center(
-              child: Text(
-                "You don't have any investments yet. Why don't you create one?",
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Row(
+            children: <Widget>[
+              Hero(
+                tag: 'appLogo',
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 36,
+                  height: 36,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(translate('title')),
+            ],
+          ),
+        ),
+        drawer: BlocListener<MenuBloc, MenuState>(
+          listener: (_, MenuState state) {
+            if (state is FeedbackState) {
+              _showFeedbackUi();
+            } else if (state is FeedbackSent) {
+              _notifyFeedbackSent();
+            }
+          },
+          child: const AppDrawer(),
+        ),
+        body: BlocConsumer<InvestmentsBloc, InvestmentsState>(
+          listener: _handleInvestmentsState,
+          builder: (BuildContext context, InvestmentsState state) {
+            if (state is InvestmentsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is InvestmentsError) {
+              return Center(child: Text('Error: ${state.error}'));
+            } else if (state.investments.isEmpty) {
+              return const Center(
+                child: Text(
+                  "You don't have any investments yet. "
+                  "Why don't you create one?",
+                ),
+              );
+            } else if (state is InvestmentsLoaded) {
+              final List<Investment> allInvestments = state.investments;
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent &&
+                      !state.isLoadingMore &&
+                      !state.hasReachedMax) {
+                    context
+                        .read<InvestmentsBloc>()
+                        .add(const LoadMoreInvestments());
+                  }
+                  return false;
+                },
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    // Trigger event to load investments again.
+                    context.read<InvestmentsBloc>().add(
+                          const LoadInvestments(),
+                        );
+                  },
+                  child: MediaQuery.sizeOf(context).width > 600
+                      ? _buildDesktopTable(allInvestments)
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: state is CreatingInvestment
+                              ? allInvestments.length + 1
+                              : allInvestments.length +
+                                  // Add extra item for loader.
+                                  (state.hasReachedMax ? 0 : 1),
+                          itemBuilder: (_, int index) {
+                            if (state is CreatingInvestment &&
+                                index == allInvestments.length) {
+                              return const ShimmerInvestment();
+                            } else if (index == allInvestments.length) {
+                              return const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              );
+                            }
+                            final Investment investment = allInvestments[index];
+                            return InvestmentTile(investment: investment);
+                          },
+                        ),
+                ),
+              );
+            } else {
+              // TODO: handle this case. We should not be here.
+              return const SizedBox();
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              SlidePageRoute(
+                page: BlocProvider<InvestmentsBloc>.value(
+                  value: context.read<InvestmentsBloc>(),
+                  child: const AddEditInvestmentPage(),
+                ),
               ),
             );
-          } else {
-            final List<Investment> allInvestments = state.investments;
-            return RefreshIndicator(
-              onRefresh: () async {
-                // Trigger event to load investments again.
-                return context
-                    .read<InvestmentsBloc>()
-                    .add(const LoadInvestments());
-              },
-              child: MediaQuery.sizeOf(context).width > 600
-                  ? _buildDesktopTable(allInvestments)
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: state is CreatingInvestment
-                          ? allInvestments.length + 1
-                          : allInvestments.length,
-                      itemBuilder: (_, int index) {
-                        if (state is CreatingInvestment &&
-                            index == allInvestments.length) {
-                          return const ShimmerInvestment();
-                        }
-                        final Investment investment = allInvestments[index];
-                        return InvestmentWidget(investment: investment);
-                      },
-                    ),
-            );
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            SlidePageRoute(
-              page: BlocProvider<InvestmentsBloc>.value(
-                value: context.read<InvestmentsBloc>(),
-                child: const AddEditInvestmentPage(),
-              ),
-            ),
-          );
-        },
-        tooltip: 'Add Investment.',
-        child: const Icon(Icons.add),
+          },
+          tooltip: 'Add Investment.',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

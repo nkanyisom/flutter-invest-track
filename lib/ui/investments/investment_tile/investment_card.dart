@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/investment_page.dart';
+import 'package:investtrack/ui/investments/investment_tile/investment_detail.dart';
 import 'package:models/models.dart';
 
 class InvestmentCard extends StatelessWidget {
@@ -16,15 +17,18 @@ class InvestmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String purchaseDateTimestamp =
-        investment.purchaseDate?.toLocal().toString().split(' ').first ?? 'N/A';
-
+        investment.purchaseDate?.toLocal().toString().split(' ').firstOrNull ??
+            '';
+    final int quantity = investment.quantity;
     return Card(
-      elevation: 4.0,
+      elevation: 6.0,
       margin: const EdgeInsets.all(8.0),
-      shadowColor: Colors.white24,
+      shadowColor: Colors.blueGrey.withOpacity(0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade700, width: 0.5),
       ),
+      color: Theme.of(context).colorScheme.surface.withOpacity(0.6),
       child: InkWell(
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -58,52 +62,69 @@ class InvestmentCard extends StatelessWidget {
                         ),
                         Text(
                           investment.companyName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 16),
-              _buildInvestmentDetail(
-                context,
-                label: 'Quantity',
-                value: investment.quantity.toString(),
-                icon: Icons.pie_chart,
-              ),
-              _buildInvestmentDetail(
-                context,
-                label: 'Current Value',
-                value: investment.totalCurrentValue?.toString() ?? 'N/A',
+              const Divider(height: 20),
+              if (quantity > 0)
+                InvestmentDetail(
+                  label: 'Quantity',
+                  value: quantity.toString(),
+                  icon: Icons.pie_chart,
+                ),
+              InvestmentDetail(
+                label: 'Current Price',
+                value: investment.currency == 'USD'
+                    ? '\$${investment.currentPrice?.toStringAsFixed(2) ?? ''
+                        'Loading...'}'
+                    : '${investment.currency} '
+                        '${investment.currentPrice?.toStringAsFixed(2) ?? ''
+                            'Loading...'}',
                 icon: Icons.monetization_on,
               ),
-              _buildInvestmentDetail(
-                context,
-                label: 'Gain/Loss (USD)',
-                value: investment.gainOrLossUsd?.toString() ?? 'N/A',
-                icon: Icons.trending_up,
-              ),
-              _buildInvestmentDetail(
-                context,
-                label: 'Gain/Loss (CAD)',
-                value: investment.gainOrLossCad?.toString() ?? 'N/A',
-                icon: Icons.trending_down,
-              ),
+              if (quantity > 0)
+                InvestmentDetail(
+                  label: 'Gain/Loss (USD)',
+                  value: investment.gainOrLossUsd?.toString() ?? 'N/A',
+                  icon: Icons.trending_up,
+                ),
+              if (quantity > 0)
+                InvestmentDetail(
+                  label: 'Gain/Loss (CAD)',
+                  value: investment.gainOrLossCad?.toString() ?? 'N/A',
+                  icon: Icons.trending_down,
+                ),
               const SizedBox(height: 16),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  'Purchased: $purchaseDateTimestamp',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      purchaseDateTimestamp.isEmpty
+                          ? 'Not yet purchased.'
+                          : 'Purchased: $purchaseDateTimestamp',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.watch_later_outlined,
+                      size: 16,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -122,39 +143,6 @@ class InvestmentCard extends StatelessWidget {
           child: const InvestmentPage(),
         ),
       ),
-    );
-  }
-
-  Widget _buildInvestmentDetail(
-    BuildContext context, {
-    required String label,
-    required String value,
-    required IconData icon,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Icon(icon, size: 16, color: Colors.teal),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
     );
   }
 }

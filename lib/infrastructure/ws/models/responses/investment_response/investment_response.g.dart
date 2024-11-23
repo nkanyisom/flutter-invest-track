@@ -15,13 +15,13 @@ InvestmentResponse _$InvestmentResponseFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       companyLogoUrl: json['companyLogoUrl'] as String,
-      slug: json['slug'] as String,
+      slug: json['slug'] as String?,
       type: json['type'] as String,
       stockExchange: json['stockExchange'] as String,
       currency: json['currency'] as String,
       description: json['description'] as String,
       quantity: (json['quantity'] as num).toInt(),
-      isPurchased: json['isPurchased'] as bool,
+      isPurchased: json['isPurchased'] as bool?,
       purchaseDate: json['purchaseDate'] == null
           ? null
           : DateTime.parse(json['purchaseDate'] as String),

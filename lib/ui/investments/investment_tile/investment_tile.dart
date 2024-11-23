@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
-import 'package:investtrack/ui/investments/investment_card.dart';
+import 'package:investtrack/ui/investments/investment_tile/investment_card.dart';
 import 'package:models/models.dart';
 
-class InvestmentWidget extends StatelessWidget {
-  const InvestmentWidget({required this.investment, super.key});
+class InvestmentTile extends StatelessWidget {
+  const InvestmentTile({required this.investment, super.key});
 
   final Investment investment;
 
