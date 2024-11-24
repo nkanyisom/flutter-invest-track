@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:investtrack/application_services/blocs/sign_in/bloc/sign_in_bloc.dart';
 import 'package:investtrack/res/constants/constants.dart' as constants;
+import 'package:investtrack/res/constants/hero_tags.dart' as hero_tags;
 import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/ui/sign_in/continue_button.dart';
 import 'package:investtrack/ui/sign_in/email_input.dart';
@@ -63,7 +64,7 @@ class _SignInFormState extends State<SignInForm>
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Hero(
-                tag: 'appLogo',
+                tag: hero_tags.appLogo,
                 child: Image.asset(
                   'assets/images/logo.png',
                   width: 96,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:investtrack/ui/investments/investment/info_row.dart';
 
 class PriceChangeWidget extends StatelessWidget {
   const PriceChangeWidget({
@@ -15,58 +16,19 @@ class PriceChangeWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _buildInfoRow(
-          context,
-          'Price Change',
-          '${priceChange.toStringAsFixed(2)}\$',
-          priceChange >= 0 ? Icons.trending_up : Icons.trending_down,
-          priceChange >= 0 ? Colors.green : Colors.red,
+        InfoRow(
+          label: 'Price Change',
+          value: '\$${priceChange.toStringAsFixed(2)}',
+          icon: priceChange >= 0 ? Icons.trending_up : Icons.trending_down,
+          valueColor: priceChange >= 0 ? Colors.green : Colors.red,
         ),
-        _buildInfoRow(
-          context,
-          'Change %',
-          '${changePercentage.toStringAsFixed(2)}%',
-          changePercentage >= 0 ? Icons.trending_up : Icons.trending_down,
-          changePercentage >= 0 ? Colors.green : Colors.red,
+        InfoRow(
+          label: 'Change %',
+          value: '${changePercentage.toStringAsFixed(2)}%',
+          icon: changePercentage >= 0 ? Icons.trending_up : Icons.trending_down,
+          valueColor: changePercentage >= 0 ? Colors.green : Colors.red,
         ),
       ],
-    );
-  }
-
-  Widget _buildInfoRow(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon, [
-    Color? valueColor,
-  ]) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Icon(
-                icon,
-                color: valueColor ?? Theme.of(context).iconTheme.color,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 18),
-              ),
-            ],
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              color: valueColor ?? Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

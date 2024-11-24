@@ -9,6 +9,8 @@ import 'package:investtrack/application_services/blocs/investments/investments_b
 import 'package:investtrack/application_services/blocs/menu/menu_bloc.dart';
 import 'package:investtrack/domain_services/exchange_rate_repository.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
+import 'package:investtrack/res/constants/constants.dart' as constants;
+import 'package:investtrack/res/constants/hero_tags.dart' as hero_tags;
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
 import 'package:investtrack/ui/investments/investment_tile/investment_tile.dart';
@@ -92,9 +94,9 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           title: Row(
             children: <Widget>[
               Hero(
-                tag: 'appLogo',
+                tag: hero_tags.appLogo,
                 child: Image.asset(
-                  'assets/images/logo.png',
+                  '${constants.imagePath}logo.png',
                   width: 36,
                   height: 36,
                 ),
@@ -130,6 +132,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
               );
             } else if (state is InvestmentsLoaded) {
               final List<Investment> allInvestments = state.investments;
+
               return NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
                   if (scrollInfo.metrics.pixels ==
@@ -165,8 +168,9 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
                             } else if (index == allInvestments.length) {
                               return const Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                               );
                             }
                             final Investment investment = allInvestments[index];

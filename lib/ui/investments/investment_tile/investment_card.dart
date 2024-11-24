@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
+import 'package:investtrack/res/constants/hero_tags.dart' as hero_tags;
+import 'package:investtrack/res/constants/types.dart' as types;
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/investment_page.dart';
+import 'package:investtrack/ui/investments/investment_tile/custom_badge.dart';
 import 'package:investtrack/ui/investments/investment_tile/investment_detail.dart';
+import 'package:investtrack/utils/price_utils.dart';
 import 'package:models/models.dart';
 
 class InvestmentCard extends StatelessWidget {
@@ -20,6 +24,15 @@ class InvestmentCard extends StatelessWidget {
         investment.purchaseDate?.toLocal().toString().split(' ').firstOrNull ??
             '';
     final int quantity = investment.quantity;
+    final ThemeData themeData = Theme.of(context);
+    final double? currentPrice = investment.currentPrice;
+    final String currency = investment.currency;
+    final double? purchasePrice = investment.purchasePrice;
+    final double? gainOrLoss = investment.gainOrLossUsd;
+    final double totalValuePurchase = quantity * (purchasePrice ?? 0);
+    final double gainOrLossPercentage = totalValuePurchase != 0
+        ? ((gainOrLoss ?? 0) / totalValuePurchase) * 100
+        : 0;
     return Card(
       elevation: 6.0,
       margin: const EdgeInsets.all(8.0),
@@ -28,7 +41,7 @@ class InvestmentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.shade700, width: 0.5),
       ),
-      color: Theme.of(context).colorScheme.surface.withOpacity(0.6),
+      color: themeData.colorScheme.surface.withOpacity(0.6),
       child: InkWell(
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -41,33 +54,55 @@ class InvestmentCard extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(
-                      investment.companyLogoUrl,
+                  Hero(
+                    tag: '${hero_tags.companyLogo}${investment.id}',
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(investment.companyLogoUrl),
+                      radius: 24,
                     ),
-                    radius: 24,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(
-                          investment.ticker,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              investment.ticker,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // Add type badge with color.
+                            CustomBadge(
+                              // Use the color mapping.
+                              backgroundColor:
+                                  types.investmentTypeColors[investment.type] ??
+                                      Colors.grey,
+                              child: Text(
+                                investment.type,
+                                style: TextStyle(
+                                  // Adjust size for the badge.
+                                  fontSize:
+                                      themeData.textTheme.labelMedium?.fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  // Ensure text color contrasts well.
+                                  color: themeData.colorScheme.onBackground,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Text(
                           investment.companyName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
+                          style: themeData.textTheme.headlineMedium?.copyWith(
+                            color: themeData.colorScheme.secondary,
+                          ),
                         ),
                       ],
                     ),
@@ -77,33 +112,39 @@ class InvestmentCard extends StatelessWidget {
               const Divider(height: 20),
               if (quantity > 0)
                 InvestmentDetail(
-                  label: 'Quantity',
-                  value: quantity.toString(),
-                  icon: Icons.pie_chart,
+                  label: 'Purchase Price',
+                  value: formatPrice(price: purchasePrice, currency: currency),
+                  icon: Icons.money,
+                ),
+              if (quantity > 0)
+                InvestmentDetail(
+                  label: 'Gain/Loss (USD)',
+                  value:
+                      '${formatPrice(price: gainOrLoss, currency: currency)} '
+                      '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
+                  icon: gainOrLoss != null
+                      ? gainOrLoss >= 0
+                          ? Icons.trending_up
+                          : Icons.trending_down
+                      : Icons.question_mark,
+                  valueColor: gainOrLoss != null
+                      ? gainOrLoss >= 0
+                          ? Colors.green
+                          : Colors.red
+                      : Colors.grey,
                 ),
               InvestmentDetail(
                 label: 'Current Price',
-                value: investment.currency == 'USD'
-                    ? '\$${investment.currentPrice?.toStringAsFixed(2) ?? ''
-                        'Loading...'}'
-                    : '${investment.currency} '
-                        '${investment.currentPrice?.toStringAsFixed(2) ?? ''
-                            'Loading...'}',
+                value: formatPrice(price: currentPrice, currency: currency),
                 icon: Icons.monetization_on,
               ),
               if (quantity > 0)
                 InvestmentDetail(
-                  label: 'Gain/Loss (USD)',
-                  value: investment.gainOrLossUsd?.toString() ?? 'N/A',
-                  icon: Icons.trending_up,
+                  label: 'Quantity',
+                  value: quantity.toString(),
+                  icon: Icons.pie_chart,
                 ),
-              if (quantity > 0)
-                InvestmentDetail(
-                  label: 'Gain/Loss (CAD)',
-                  value: investment.gainOrLossCad?.toString() ?? 'N/A',
-                  icon: Icons.trending_down,
-                ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: Row(
@@ -120,9 +161,9 @@ class InvestmentCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Icon(
-                      Icons.watch_later_outlined,
+                      Icons.calendar_month_outlined,
                       size: 16,
-                      color: Theme.of(context).iconTheme.color,
+                      color: themeData.iconTheme.color,
                     ),
                   ],
                 ),

@@ -115,7 +115,7 @@ final class SelectedInvestmentState extends InvestmentsLoaded {
   const SelectedInvestmentState({
     required this.selectedInvestment,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 
@@ -126,7 +126,7 @@ final class ValueLoadingState extends SelectedInvestmentState {
   const ValueLoadingState({
     required super.selectedInvestment,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 }
@@ -136,7 +136,7 @@ final class CurrentValueLoaded extends ValueLoadingState {
     required this.currentPrice,
     required super.selectedInvestment,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 
@@ -149,7 +149,7 @@ final class ExchangeRateLoaded extends CurrentValueLoaded {
     required super.currentPrice,
     required super.selectedInvestment,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 
@@ -158,20 +158,20 @@ final class ExchangeRateLoaded extends CurrentValueLoaded {
 
 final class InvestmentUpdated extends SelectedInvestmentState {
   const InvestmentUpdated({
-    required this.purchasePrice,
     required this.currentPrice,
     required super.selectedInvestment,
-    required this.exchangeRate,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
+    this.exchangeRate,
+    this.purchasePrice,
     super.isLoadingMore = false,
     this.priceChange = 0,
     this.changePercentage = 0,
   });
 
-  final double purchasePrice;
+  final double? purchasePrice;
   final double currentPrice;
-  final double exchangeRate;
+  final double? exchangeRate;
   final double priceChange;
   final double changePercentage;
 

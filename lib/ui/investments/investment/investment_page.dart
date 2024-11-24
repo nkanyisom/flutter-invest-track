@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
+import 'package:investtrack/res/constants/hero_tags.dart' as hero_tags;
 import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
+import 'package:investtrack/ui/investments/investment/info_row.dart';
 import 'package:investtrack/ui/investments/investment/price_change_widget.dart';
+import 'package:investtrack/utils/price_utils.dart';
 import 'package:models/models.dart';
 
 class InvestmentPage extends StatefulWidget {
@@ -58,6 +61,8 @@ class _InvestmentPageState extends State<InvestmentPage>
           double currentPrice = 0;
           if (state is CurrentValueLoaded) {
             currentPrice = state.currentPrice;
+          } else if (state is InvestmentUpdated){
+            currentPrice = state.currentPrice;
           }
 
           double exchangeRate = 1;
@@ -66,11 +71,15 @@ class _InvestmentPageState extends State<InvestmentPage>
           }
 
           double totalValuePurchase = 0;
-          if (state is InvestmentUpdated) {
-            totalValuePurchase = quantity * state.purchasePrice;
+          if (state is InvestmentUpdated &&
+              state.purchasePrice != null &&
+              state.exchangeRate != null) {
+            final double purchasePrice = state.purchasePrice!;
+            final double stateExchangeRate = state.exchangeRate!;
+            totalValuePurchase = quantity * purchasePrice;
             currentPrice = state.currentPrice;
             totalValueCurrent = quantity * state.currentPrice;
-            exchangeRate = state.exchangeRate;
+            exchangeRate = stateExchangeRate;
           }
 
           final double totalValueCad = totalValueCurrent * exchangeRate;
@@ -87,12 +96,13 @@ class _InvestmentPageState extends State<InvestmentPage>
               : 0;
           final String currency = investment.currency;
           final bool isPurchased = investment.isPurchased;
+
           return Scaffold(
             appBar: AppBar(
               title: Text(
                 investment.ticker,
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -122,15 +132,17 @@ class _InvestmentPageState extends State<InvestmentPage>
                       Row(
                         children: <Widget>[
                           if (investment.companyLogoUrl.isNotEmpty)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              // Adjust the radius as needed
-                              child: ColoredBox(
-                                color: Colors.white,
-                                child: Image.network(
-                                  investment.companyLogoUrl,
-                                  width: 100,
-                                  height: 100,
+                            Hero(
+                              tag: '${hero_tags.companyLogo}${investment.id}',
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: ColoredBox(
+                                  color: Colors.white,
+                                  child: Image.network(
+                                    investment.companyLogoUrl,
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ),
                               ),
                             ),
@@ -150,95 +162,94 @@ class _InvestmentPageState extends State<InvestmentPage>
                       if (state is ValueLoadingState)
                         const CircularProgressIndicator()
                       else
-                        _buildInfoRow(
-                          context,
-                          'Current Price',
-                          currentPrice.toStringAsFixed(2),
-                          Icons.monetization_on,
+                        InfoRow(
+                          label: 'Current Price',
+                          value: formatPrice(
+                            price: currentPrice,
+                            currency: currency,
+                          ),
+                          icon: Icons.monetization_on,
                         ),
                       if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Quantity',
-                          investment.quantity.toString(),
-                          Icons.confirmation_number,
+                        InfoRow(
+                          label: 'Quantity',
+                          value: investment.quantity.toString(),
+                          icon: Icons.confirmation_number,
                         ),
                       if (state is ValueLoadingState)
                         const CircularProgressIndicator()
                       else if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Total Value (Current)',
-                          totalValueCurrent.toStringAsFixed(2),
-                          Icons.attach_money,
+                        InfoRow(
+                          label: 'Total Value (Current)',
+                          value: totalValueCurrent.toStringAsFixed(2),
+                          icon: Icons.attach_money,
                         ),
                       if (state is ValueLoadingState)
                         const CircularProgressIndicator()
                       else if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Total Value (Current CAD)',
-                          totalValueCad.toStringAsFixed(2),
-                          Icons.currency_exchange_sharp,
+                        InfoRow(
+                          label: 'Total Value (Current CAD)',
+                          value: totalValueCad.toStringAsFixed(2),
+                          icon: Icons.currency_exchange_sharp,
                         ),
                       if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Purchase Date',
-                          investment.purchaseDate
+                        InfoRow(
+                          label: 'Purchase Date',
+                          value: investment.purchaseDate
                                   ?.toIso8601String()
                                   .split('T')
                                   .firstOrNull ??
                               '',
-                          Icons.calendar_today,
+                          icon: Icons.calendar_today,
                         ),
-                      if (state is InvestmentUpdated && isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Purchase Price',
-                          state.purchasePrice.toStringAsFixed(2),
-                          Icons.price_check,
+                      if (state is InvestmentUpdated &&
+                          state.purchasePrice != null)
+                        InfoRow(
+                          label: 'Purchase Price',
+                          value: state.purchasePrice!.toStringAsFixed(2),
+                          icon: Icons.price_check,
                         )
                       else if (isPurchased)
                         const CircularProgressIndicator(),
                       if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Total Value (Purchase)',
-                          totalValuePurchase.toStringAsFixed(2),
-                          Icons.money,
+                        InfoRow(
+                          label: 'Total Value (Purchase)',
+                          value: totalValuePurchase.toStringAsFixed(2),
+                          icon: Icons.money,
                         ),
                       if (isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Total Value (Purchase CAD)',
-                          totalValuePurchaseCad.toStringAsFixed(2),
-                          Icons.money_rounded,
+                        InfoRow(
+                          label: 'Total Value (Purchase CAD)',
+                          value: totalValuePurchaseCad.toStringAsFixed(2),
+                          icon: Icons.money_rounded,
                         ),
                       if (state is InvestmentUpdated && isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Gain/Loss',
-                          '${gainOrLoss.toStringAsFixed(2)} '
+                        InfoRow(
+                          label: 'Gain/Loss',
+                          value: '${formatPrice(
+                            price: gainOrLoss,
+                            currency: currency,
+                          )} '
                               '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
-                          gainOrLoss >= 0
+                          icon: gainOrLoss >= 0
                               ? Icons.trending_up
                               : Icons.trending_down,
-                          gainOrLoss >= 0 ? Colors.green : Colors.red,
+                          valueColor:
+                              gainOrLoss >= 0 ? Colors.green : Colors.red,
                         )
                       else if (isPurchased)
                         const CircularProgressIndicator(),
                       if (state is InvestmentUpdated && isPurchased)
-                        _buildInfoRow(
-                          context,
-                          'Gain/Loss CAD',
-                          '${gainOrLossCad.toStringAsFixed(2)} '
+                        InfoRow(
+                          label: 'Gain/Loss CAD',
+                          value: '${gainOrLossCad.toStringAsFixed(2)} '
                               '(${gainOrLossPercentageCad.toStringAsFixed(2)}'
                               '%)',
-                          gainOrLossCad >= 0
+                          icon: gainOrLossCad >= 0
                               ? Icons.trending_up
                               : Icons.trending_down,
-                          gainOrLossCad >= 0 ? Colors.green : Colors.red,
+                          valueColor:
+                              gainOrLossCad >= 0 ? Colors.green : Colors.red,
                         )
                       else if (isPurchased)
                         const CircularProgressIndicator(),
@@ -266,43 +277,6 @@ class _InvestmentPageState extends State<InvestmentPage>
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
-
-  Widget _buildInfoRow(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon, [
-    Color? valueColor,
-  ]) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Icon(
-                icon,
-                color: valueColor ?? Theme.of(context).iconTheme.color,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 18),
-              ),
-            ],
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              color: valueColor ?? Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   void _editInvestment(Investment investment) {
