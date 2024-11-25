@@ -6,6 +6,7 @@ import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/router/slide_page_route.dart';
 import 'package:investtrack/ui/investments/investment/add_edit_investment_page.dart';
 import 'package:investtrack/ui/investments/investment/info_row.dart';
+import 'package:investtrack/ui/investments/investment/markdown_widget.dart';
 import 'package:investtrack/ui/investments/investment/price_change_widget.dart';
 import 'package:investtrack/utils/price_utils.dart';
 import 'package:models/models.dart';
@@ -61,7 +62,7 @@ class _InvestmentPageState extends State<InvestmentPage>
           double currentPrice = 0;
           if (state is CurrentValueLoaded) {
             currentPrice = state.currentPrice;
-          } else if (state is InvestmentUpdated){
+          } else if (state is InvestmentUpdated) {
             currentPrice = state.currentPrice;
           }
 
@@ -92,7 +93,7 @@ class _InvestmentPageState extends State<InvestmentPage>
               : 0;
 
           final double gainOrLossPercentageCad = totalValuePurchaseCad != 0
-              ? ((gainOrLossCad / totalValuePurchaseCad) * 100) * 100
+              ? (gainOrLossCad / totalValuePurchaseCad) * 100
               : 0;
           final String currency = investment.currency;
           final bool isPurchased = investment.isPurchased;
@@ -260,6 +261,9 @@ class _InvestmentPageState extends State<InvestmentPage>
                         )
                       else
                         const CircularProgressIndicator(),
+                      const SizedBox(height: 20),
+                      if (investment.description.isNotEmpty)
+                        MarkdownWidget(content: investment.description),
                     ],
                   ),
                 ),
