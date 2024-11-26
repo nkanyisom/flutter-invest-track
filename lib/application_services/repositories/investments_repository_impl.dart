@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:investtrack/res/constants/constants.dart' as constants;
@@ -32,13 +35,29 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
       _restClient.deleteInvestment(investment.id);
 
   @override
-  Future<Investment> update(Investment investment) {
-    // TODO: handle error.
-    return _restClient
-        .updateInvestment(investment)
-        .then((InvestmentResult response) {
+  Future<Investment> update(Investment investment) async {
+    try {
+      final InvestmentResult response = await _restClient.updateInvestment(
+        investment,
+      );
       return response.investment;
-    });
+    } catch (error) {
+      if (error is DioError && error.response?.data != null) {
+        // Try to parse the error message from the response body
+        final dynamic responseData = error.response!.data;
+        if (responseData is String) {
+          // If the response is a raw JSON string, parse it
+          final Map<String, dynamic> parsedData = json.decode(responseData);
+          throw Exception(parsedData['error'] ?? 'Unknown error occurred');
+        } else if (responseData is Map<String, dynamic>) {
+          // If the response is already a parsed JSON object
+          throw Exception(responseData['error'] ?? 'Unknown error occurred');
+        }
+      }
+      // Re-throw the original error if it's not a DioError or has no response
+      // data.
+      rethrow;
+    }
   }
 
   @override

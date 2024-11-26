@@ -112,7 +112,6 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
       if (purchasePrice != 0 &&
           currentPrice != 0 &&
           state is InvestmentsLoaded) {
-
         emit(
           InvestmentUpdated(
             purchasePrice: purchasePrice,
@@ -364,7 +363,9 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
 
       try {
         final Investment updatedInvestment =
-            await _investmentsRepository.update(investment);
+            await _investmentsRepository.update(
+          investment,
+        );
 
         // Update the createdInvestment in the existing list of investments.
         final int index = investments.indexWhere(
