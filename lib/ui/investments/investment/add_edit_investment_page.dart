@@ -24,6 +24,8 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
   late TextEditingController _companyLogoUrlController;
   late TextEditingController _quantityController;
   late TextEditingController _descriptionController;
+  final ValueNotifier<bool> _formStateChangedNotifier =
+      ValueNotifier<bool>(false);
   DateTime? _purchaseDate;
   String? _investmentType;
   String? _stockExchange;
@@ -34,16 +36,23 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
     super.initState();
     _tickerController = TextEditingController(
       text: widget.investment?.ticker ?? '',
-    );
+    )..addListener(() {
+        _formStateChangedNotifier.value = !_formStateChangedNotifier.value;
+      });
+
     _companyNameController = TextEditingController(
       text: widget.investment?.companyName ?? '',
     );
     _companyLogoUrlController = TextEditingController(
       text: widget.investment?.companyLogoUrl ?? '',
     );
+
     _quantityController = TextEditingController(
       text: widget.investment?.quantity.toString() ?? '',
-    );
+    )..addListener(() {
+        _formStateChangedNotifier.value = !_formStateChangedNotifier.value;
+      });
+
     _descriptionController = TextEditingController(
       text: widget.investment?.description ?? '',
     );
@@ -126,13 +135,31 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                   final bool isQuantityValid =
                       text.isNotEmpty && quantity != null && quantity > 0;
 
-                  if (!isQuantityValid) return const SizedBox.shrink();
-
-                  return DatePicker(
-                    label: 'Purchase Date and Time',
-                    selectedDate: _purchaseDate,
-                    onChanged: (DateTime? value) =>
-                        setState(() => _purchaseDate = value),
+                  return Column(
+                    children: <Widget>[
+                      if (isQuantityValid)
+                        DatePicker(
+                          label: 'Purchase Date and Time',
+                          selectedDate: _purchaseDate,
+                          onChanged: (DateTime? value) =>
+                              setState(() => _purchaseDate = value),
+                        ),
+                      if (isQuantityValid &&
+                          (_purchaseDate == null ||
+                              _purchaseDate!.isAfter(DateTime.now())))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            _purchaseDate == null
+                                ? 'Please select a purchase date.'
+                                : 'Purchase date cannot be in the future.',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
                   );
                 },
               ),
@@ -163,15 +190,14 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                         );
                       },
                     ),
-                  ValueListenableBuilder<TextEditingValue>(
-                    valueListenable: _tickerController,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _formStateChangedNotifier,
                     child: const Text('Submit'),
                     builder: (
                       _,
-                      TextEditingValue titleValue,
+                      __,
                       Widget? submitText,
                     ) {
-                      const double progressIndicatorSize = 24.0;
                       return BlocConsumer<InvestmentsBloc, InvestmentsState>(
                         listener: (
                           BuildContext context,
@@ -199,10 +225,23 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                           final bool isSubmitting =
                               state is UpdatingInvestment ||
                                   state is CreatingInvestment;
+
+                          const double progressIndicatorSize = 24.0;
+
+                          final String tickerValue = _tickerController.text;
+                          final int? quantity =
+                              int.tryParse(_quantityController.text);
+                          final bool isQuantityValid =
+                              quantity != null && quantity > 0;
+                          final bool isPurchaseDateValid =
+                              _purchaseDate != null &&
+                                  _purchaseDate!.isBefore(DateTime.now());
+
+                          final bool isFormValid = tickerValue.isNotEmpty &&
+                              (!isQuantityValid || isPurchaseDateValid);
                           return ElevatedButton(
-                            onPressed: (isSubmitting || titleValue.text.isEmpty)
-                                ? null
-                                : _submit,
+                            onPressed:
+                                (isSubmitting || !isFormValid) ? null : _submit,
                             child: isSubmitting
                                 ? const SizedBox(
                                     width: progressIndicatorSize,
@@ -235,6 +274,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
     _companyLogoUrlController.dispose();
     _quantityController.dispose();
     _descriptionController.dispose();
+    _formStateChangedNotifier.dispose();
     super.dispose();
   }
 

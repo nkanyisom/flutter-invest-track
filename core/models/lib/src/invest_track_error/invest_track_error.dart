@@ -11,10 +11,10 @@ class InvestTrackError {
     return _$InvestTrackErrorFromJson(json);
   }
 
-  const InvestTrackError({required this.error, required this.details});
+  const InvestTrackError({required this.error, this.details});
 
   final String error;
-  final Details details;
+  final Details? details;
 
   Map<String, dynamic> toJson() => _$InvestTrackErrorToJson(this);
 

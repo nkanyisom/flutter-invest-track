@@ -40,7 +40,9 @@ class DatePicker extends StatelessWidget {
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now().add(
+        const Duration(days: 1),
+      ), // Restrict to tomorrow
     );
     if (picked != null && context.mounted) {
       final TimeOfDay? time = await showTimePicker(

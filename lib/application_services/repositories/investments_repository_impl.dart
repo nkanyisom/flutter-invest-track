@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
 import 'package:injectable/injectable.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:investtrack/res/constants/constants.dart' as constants;
@@ -44,12 +45,25 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
     } catch (error) {
       if (error is DioError) {
         // Try to parse the error message from the response body
-        final dynamic responseData = error.response?.data;
+        final Object? responseData = error.response?.data;
+
         if (responseData is String) {
           // If the response is a raw JSON string, parse it
           final Map<String, dynamic> parsedData = json.decode(responseData);
           throw Exception(parsedData['error'] ?? 'Unknown error occurred');
         } else if (responseData is Map<String, dynamic>) {
+          // Try to convert the responseData to InvestTrackError using fromJson.
+          try {
+            final InvestTrackError investTrackError = InvestTrackError.fromJson(
+              responseData,
+            );
+
+            throw Exception(investTrackError.error);
+          } catch (e) {
+            // Handle the case where the parsing fails
+            debugPrint('Error parsing InvestTrackError: $e');
+          }
+
           // If the response is already a parsed JSON object
           throw Exception(responseData['error'] ?? 'Unknown error occurred');
         }
