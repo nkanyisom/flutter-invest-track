@@ -188,7 +188,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(
-              SlidePageRoute(
+              SlidePageRoute<Investment?>(
                 page: BlocProvider<InvestmentsBloc>.value(
                   value: context.read<InvestmentsBloc>(),
                   child: const AddEditInvestmentPage(),

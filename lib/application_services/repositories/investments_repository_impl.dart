@@ -42,9 +42,9 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
       );
       return response.investment;
     } catch (error) {
-      if (error is DioError && error.response?.data != null) {
+      if (error is DioError) {
         // Try to parse the error message from the response body
-        final dynamic responseData = error.response!.data;
+        final dynamic responseData = error.response?.data;
         if (responseData is String) {
           // If the response is a raw JSON string, parse it
           final Map<String, dynamic> parsedData = json.decode(responseData);

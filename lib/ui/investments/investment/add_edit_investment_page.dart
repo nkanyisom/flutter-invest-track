@@ -142,7 +142,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                       child: _deleteInProgress
                           ? const CircularProgressIndicator()
                           : const Text(
-                              'Delete investment.',
+                              'Delete investment',
                               style: TextStyle(color: Colors.red),
                             ),
                     ),
@@ -161,8 +161,11 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                           InvestmentsState state,
                         ) {
                           if (state is InvestmentSubmitted) {
+                            context
+                                .read<InvestmentsBloc>()
+                                .add(LoadInvestment(state.investment));
                             // Close the screen.
-                            Navigator.of(context).pop(true);
+                            Navigator.of(context).pop(state.investment);
                           } else if (state is InvestmentsError) {
                             // Show a snackbar with the error message.
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -369,6 +372,6 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
 
     context.read<InvestmentsBloc>().add(DeleteInvestmentEvent(investment));
     setState(() => _deleteInProgress = false);
-    Navigator.of(context).pop(true);
+    Navigator.of(context).pop(investment);
   }
 }

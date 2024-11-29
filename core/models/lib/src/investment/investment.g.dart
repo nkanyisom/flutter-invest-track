@@ -18,11 +18,11 @@ Investment _$InvestmentFromJson(Map<String, dynamic> json) => Investment(
       purchaseDate: json['purchaseDate'] == null
           ? null
           : DateTime.parse(json['purchaseDate'] as String),
-      slug: json['slug'] as String? ?? '',
+      companyName: json['companyName'] as String,
+      slug: json['slug'] as String?,
       id: (json['id'] as num?)?.toInt() ?? 0,
-      companyName: json['companyName'] as String? ?? '',
       totalValueOnPurchase: (json['totalValueOnPurchase'] as num?)?.toDouble(),
-      isPurchased: json['isPurchased'] as bool? ?? false,
+      isPurchased: json['isPurchased'] as bool?,
       purchasePrice: (json['purchasePrice'] as num?)?.toDouble(),
       totalCurrentValue: (json['totalCurrentValue'] as num?)?.toDouble(),
       gainOrLossCad: (json['gainOrLossCad'] as num?)?.toDouble(),
@@ -33,6 +33,7 @@ Investment _$InvestmentFromJson(Map<String, dynamic> json) => Investment(
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
+      currentPrice: (json['currentPrice'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$InvestmentToJson(Investment instance) =>
@@ -57,4 +58,5 @@ Map<String, dynamic> _$InvestmentToJson(Investment instance) =>
       'gainOrLossUsd': instance.gainOrLossUsd,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
+      'currentPrice': instance.currentPrice,
     };

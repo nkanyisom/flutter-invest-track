@@ -20,6 +20,7 @@ export 'src/enums/feedback_type.dart';
 export 'src/enums/language.dart';
 export 'src/enums/storage_keys.dart';
 export 'src/feedback_details.dart';
+export 'src/invest_track_error/invest_track_error.dart';
 export 'src/investment/investment.dart';
 export 'src/password.dart';
 export 'src/rest_client.dart';

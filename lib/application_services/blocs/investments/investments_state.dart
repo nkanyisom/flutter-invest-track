@@ -92,14 +92,6 @@ final class InvestmentDeleting extends SubmittingInvestment {
   });
 }
 
-final class InvestmentSubmitted extends InvestmentsLoaded {
-  const InvestmentSubmitted({
-    required super.investments,
-    super.hasReachedMax = false,
-    super.isLoadingMore = false,
-  });
-}
-
 final class InvestmentDeleted extends InvestmentsLoaded {
   const InvestmentDeleted({
     required super.investments,
@@ -199,4 +191,15 @@ final class InvestmentUpdated extends SelectedInvestmentState {
       investments: investments ?? this.investments,
     );
   }
+}
+
+final class InvestmentSubmitted extends InvestmentsLoaded {
+  const InvestmentSubmitted({
+    required this.investment,
+    required super.investments,
+    super.hasReachedMax = false,
+    super.isLoadingMore = false,
+  });
+
+  final Investment investment;
 }
