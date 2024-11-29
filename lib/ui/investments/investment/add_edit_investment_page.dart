@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/res/constants/currency_list.dart' as list;
 import 'package:investtrack/res/constants/types.dart' as types;
+import 'package:investtrack/ui/investments/investment/date_picker.dart';
+import 'package:investtrack/ui/investments/investment/dropdown_field.dart';
+import 'package:investtrack/ui/investments/investment/labeled_text_field.dart';
 import 'package:models/models.dart';
 
 class AddEditInvestmentPage extends StatefulWidget {
@@ -26,7 +28,6 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
   String? _investmentType;
   String? _stockExchange;
   String? _currency;
-  bool _deleteInProgress = false;
 
   @override
   void initState() {
@@ -67,25 +68,25 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildTextField(
+              LabeledTextField(
                 controller: _tickerController,
                 label: 'Ticker Symbol',
                 hint: 'e.g. GOOG',
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              LabeledTextField(
                 controller: _companyNameController,
                 label: 'Company Name',
                 hint: 'e.g. Alphabet Inc Class C',
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              LabeledTextField(
                 controller: _companyLogoUrlController,
                 label: 'Company Logo URL',
                 hint: 'Enter direct image URL.',
               ),
               const SizedBox(height: 16),
-              _buildDropdownField(
+              DropdownField(
                 label: 'Investment Type',
                 value: _investmentType,
                 items: types.investmentTypes,
@@ -93,7 +94,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                     setState(() => _investmentType = value),
               ),
               const SizedBox(height: 16),
-              _buildDropdownField(
+              DropdownField(
                 label: 'Stock Exchange',
                 value: _stockExchange,
                 items: types.stockExchangeTypes,
@@ -101,7 +102,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                     setState(() => _stockExchange = value),
               ),
               const SizedBox(height: 16),
-              _buildDropdownField(
+              DropdownField(
                 label: 'Currency',
                 value: _currency,
                 items: list.currencies
@@ -110,23 +111,33 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 onChanged: (String? value) => setState(() => _currency = value),
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              LabeledTextField(
                 controller: _quantityController,
                 label: 'Quantity',
                 hint: 'e.g. 100',
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              if (_quantityController.text.isNotEmpty &&
-                  int.parse(_quantityController.text) > 0)
-                _buildDatePicker(
-                  label: 'Purchase Date and Time',
-                  selectedDate: _purchaseDate,
-                  onChanged: (DateTime? value) =>
-                      setState(() => _purchaseDate = value),
-                ),
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _quantityController,
+                builder: (_, TextEditingValue value, __) {
+                  final String text = value.text;
+                  final int? quantity = int.tryParse(text);
+                  final bool isQuantityValid =
+                      text.isNotEmpty && quantity != null && quantity > 0;
+
+                  if (!isQuantityValid) return const SizedBox.shrink();
+
+                  return DatePicker(
+                    label: 'Purchase Date and Time',
+                    selectedDate: _purchaseDate,
+                    onChanged: (DateTime? value) =>
+                        setState(() => _purchaseDate = value),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
-              _buildTextField(
+              LabeledTextField(
                 controller: _descriptionController,
                 label: 'Description',
                 hint: 'Enter a description',
@@ -137,14 +148,20 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   if (widget.investment != null)
-                    TextButton(
-                      onPressed: _deleteInProgress ? null : _deleteInvestment,
-                      child: _deleteInProgress
-                          ? const CircularProgressIndicator()
-                          : const Text(
-                              'Delete investment',
-                              style: TextStyle(color: Colors.red),
-                            ),
+                    BlocBuilder<InvestmentsBloc, InvestmentsState>(
+                      builder: (_, InvestmentsState state) {
+                        return TextButton(
+                          onPressed: state is InvestmentDeleting
+                              ? null
+                              : _deleteInvestment,
+                          child: state is InvestmentDeleting
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Delete investment',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                        );
+                      },
                     ),
                   ValueListenableBuilder<TextEditingValue>(
                     valueListenable: _tickerController,
@@ -174,6 +191,8 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                                 backgroundColor: Colors.red,
                               ),
                             );
+                          } else if (state is InvestmentDeleted) {
+                            Navigator.of(context).pop(true);
                           }
                         },
                         builder: (_, InvestmentsState state) {
@@ -233,7 +252,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                   type: _investmentType ?? '',
                   stockExchange: _stockExchange ?? '',
                   currency: _currency ?? '',
-                  quantity: int.parse(_quantityController.text),
+                  quantity: int.tryParse(_quantityController.text),
                   purchaseDate: _purchaseDate,
                   description: _descriptionController.text,
                 ),
@@ -248,7 +267,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
           type: _investmentType ?? '',
           stockExchange: _stockExchange ?? '',
           currency: _currency ?? '',
-          quantity: int.parse(_quantityController.text),
+          quantity: int.tryParse(_quantityController.text) ?? 0,
           purchaseDate: _purchaseDate!,
           description: _descriptionController.text,
         );
@@ -269,109 +288,9 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
     }
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    String? hint,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: const OutlineInputBorder(),
-      ),
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      validator: (String? value) {
-        return value == null || value.isEmpty ? 'Please enter $label.' : null;
-      },
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-    String? value,
-  }) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      value: value,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: (String? value) =>
-          value == null || value.isEmpty ? 'Please select $label.' : null,
-    );
-  }
-
-  Widget _buildDatePicker({
-    required String label,
-    required ValueChanged<DateTime?> onChanged,
-    DateTime? selectedDate,
-  }) {
-    return GestureDetector(
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: selectedDate ?? DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2101),
-        );
-        if (picked != null && mounted) {
-          final TimeOfDay? time = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.now(),
-          );
-          if (time != null) {
-            final DateTime fullDateTime = DateTime(
-              picked.year,
-              picked.month,
-              picked.day,
-              time.hour,
-              time.minute,
-            );
-            onChanged(fullDateTime);
-          }
-        }
-      },
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        child: Text(
-          selectedDate == null
-              ? 'Select Date'
-              : DateFormat.yMMMd().add_jm().format(selectedDate),
-          style: TextStyle(
-            color: selectedDate == null
-                ? Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6)
-                : Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _deleteInvestment() async {
     final Investment? investment = widget.investment;
     if (investment == null) return;
-
-    setState(() => _deleteInProgress = true);
-
     context.read<InvestmentsBloc>().add(DeleteInvestmentEvent(investment));
-    setState(() => _deleteInProgress = false);
-    Navigator.of(context).pop(investment);
   }
 }
