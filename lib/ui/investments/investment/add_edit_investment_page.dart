@@ -5,7 +5,7 @@ import 'package:investtrack/res/constants/currency_list.dart' as list;
 import 'package:investtrack/res/constants/types.dart' as types;
 import 'package:investtrack/ui/investments/investment/date_picker.dart';
 import 'package:investtrack/ui/investments/investment/dropdown_field.dart';
-import 'package:investtrack/ui/investments/investment/labeled_text_field.dart';
+import 'package:investtrack/ui/widgets/labeled_text_field.dart';
 import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 import 'package:models/models.dart';
 

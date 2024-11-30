@@ -10,6 +10,7 @@ import 'package:investtrack/ui/sign_in/continue_button.dart';
 import 'package:investtrack/ui/sign_in/email_input.dart';
 import 'package:investtrack/ui/sign_in/password_input.dart';
 import 'package:investtrack/ui/sign_in/sign_up_prompt.dart';
+import 'package:investtrack/ui/widgets/input_field.dart';
 
 /// The [SignInForm] handles notifying the [SignInBloc] of user events and
 /// also responds to state changes using [BlocBuilder] and [BlocListener].
@@ -59,7 +60,7 @@ class _SignInFormState extends State<SignInForm>
       },
       builder: (BuildContext context, SignInState state) {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24.0, 120, 24, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -79,12 +80,12 @@ class _SignInFormState extends State<SignInForm>
                     curve: Curves.elasticOut,
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   constants.appName,
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.teal,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -95,41 +96,47 @@ class _SignInFormState extends State<SignInForm>
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 20),
-              _buildInputField(
-                context: context,
+              const InputField(
                 label: 'Email',
-                child: const EmailInput(),
                 icon: Icons.email,
+                child: EmailInput(),
               ),
               const SizedBox(height: 20),
-              _buildInputField(
-                context: context,
+              const InputField(
                 label: 'Password',
-                child: const PasswordInput(),
                 icon: Icons.lock,
+                child: PasswordInput(),
               ),
               const SizedBox(height: 20),
-              CheckboxListTile(
-                title: RichText(
-                  text: TextSpan(
-                    text: 'I consent to the collection of my data.\n',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    children: <InlineSpan>[
-                      TextSpan(
-                        text: 'Learn more.',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = _launchPrivacyPolicy,
-                      ),
-                    ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Checkbox(
+                    value: _isConsentGiven,
+                    onChanged: (bool? value) {
+                      setState(() => _isConsentGiven = value ?? false);
+                    },
                   ),
-                ),
-                value: _isConsentGiven,
-                onChanged: (bool? value) {
-                  setState(() => _isConsentGiven = value ?? false);
-                },
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'I consent to the collection of my data.\n',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: <InlineSpan>[
+                          TextSpan(
+                            text: 'Learn more.',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = _launchPrivacyPolicy,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               ContinueButton(
                 onPressed: _isConsentGiven
@@ -158,40 +165,5 @@ class _SignInFormState extends State<SignInForm>
 
   void _launchPrivacyPolicy() {
     Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-  }
-
-  Widget _buildInputField({
-    required BuildContext context,
-    required String label,
-    required Widget child,
-    required IconData icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[800],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: <Widget>[
-              Icon(icon, color: Colors.teal),
-              const SizedBox(width: 10),
-              Expanded(child: child),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

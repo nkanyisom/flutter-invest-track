@@ -26,7 +26,6 @@ class ContinueButton extends StatelessWidget {
       key: const Key('signInForm_continue_raisedButton'),
       onPressed: isValid ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(
           horizontal: 50,

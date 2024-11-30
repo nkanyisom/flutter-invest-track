@@ -69,11 +69,33 @@ class _AppViewState extends State<AppView> {
                 headlineLarge: TextStyle(
                   fontSize: 32.0,
                   fontWeight: FontWeight.bold,
-                  // Consistent with dark mode.
                   color: Colors.white,
+                  fontFamily: 'Roboto', // Use your desired font
                 ),
                 bodyLarge: TextStyle(
                   fontSize: 16.0,
+                  // Use your desired font.
+                  fontFamily: 'OpenSans',
+                  // Adjust color for readability in dark mode
+                  color: Colors.white,
+                ),
+              ).copyWith(
+                bodyMedium: const TextStyle(
+                  fontSize: 14.0,
+                  fontFamily: 'OpenSans',
+                  color: Colors.grey, // Semi-light gray for dark mode
+                ),
+                headlineSmall: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Roboto',
+                  color: Colors.white70, // Softer white
+                ),
+                titleMedium: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Roboto',
+                  color: Colors.white,
                 ),
               ),
               progressIndicatorTheme: const ProgressIndicatorThemeData(
@@ -82,26 +104,44 @@ class _AppViewState extends State<AppView> {
               ),
               elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                    primaryBlue.withOpacity(0.8),
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return Colors.grey
+                            .withOpacity(0.3); // Your disabled color
+                      }
+                      return primaryBlue
+                          .withOpacity(0.8); // Default background color
+                    },
                   ),
-                  // Set your preferred background color
-                  foregroundColor: MaterialStateProperty.all(Colors.white),
-                  // Set your preferred text color
-                  elevation: MaterialStateProperty.all(5.0),
-                  // Optional: Add shadow effect
+                  foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return Colors
+                            .grey.shade600; // Text color for disabled state
+                      }
+                      return Colors.white; // Default text color
+                    },
+                  ),
+                  elevation: MaterialStateProperty.resolveWith<double>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return 0.0; // No elevation when disabled
+                      }
+                      return 5.0; // Default elevation
+                    },
+                  ),
                   padding: MaterialStateProperty.all(
                     const EdgeInsets.symmetric(
                       vertical: 16.0,
                       horizontal: 24.0,
                     ),
                   ),
-                  // Optional: Adjust button padding
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                  ), // Optional: Adjust button shape
+                  ),
                 ),
               ),
               buttonTheme: const ButtonThemeData(
