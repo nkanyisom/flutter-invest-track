@@ -291,4 +291,4 @@ class PrivacyPolicyPage extends StatelessWidget {
   }
 }
 
-const String _updateDate = 'November 2024';
+const String _updateDate = 'December 2024';

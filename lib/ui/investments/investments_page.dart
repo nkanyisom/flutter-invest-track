@@ -226,7 +226,9 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
 
   @override
   void dispose() {
+    _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController?.dispose();
+    _feedbackController = null;
     super.dispose();
   }
 

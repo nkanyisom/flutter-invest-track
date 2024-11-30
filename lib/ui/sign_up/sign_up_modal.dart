@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:investtrack/ui/privacy/privacy_policy_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,9 +35,7 @@ class _SignUpModalState extends State<SignUpModal> {
                 Checkbox(
                   value: _isConsentGiven,
                   onChanged: (bool? value) {
-                    setState(() {
-                      _isConsentGiven = value ?? false;
-                    });
+                    setState(() => _isConsentGiven = value ?? false);
                   },
                 ),
                 Expanded(
@@ -88,7 +87,7 @@ class _SignUpModalState extends State<SignUpModal> {
   }
 
   Future<void> _redirectToWebSignUp(BuildContext context) async {
-    final Uri url = Uri.parse('https://lifecoach.turskyi.com/sign-up');
+    final Uri url = Uri.parse('${constants.baseUrl}sign-up');
     try {
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);

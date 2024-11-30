@@ -53,16 +53,6 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
-          // TODO: Implement the dashboard feature.
-          // ListTile(
-          //   leading: const Icon(Icons.dashboard),
-          //   title: const Text('Dashboard'),
-          //   onTap: () => Navigator.of(context).push(
-          //     MaterialPageRoute<void>(
-          //       builder: (BuildContext context) => const DashboardPage(),
-          //     ),
-          //   ),
-          // ),
           ListTile(
             leading: const Icon(Icons.privacy_tip),
             title: const Text('Privacy Policy'),
@@ -72,16 +62,6 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
-          // TODO: Implement the settings feature.
-          // ListTile(
-          //   leading: const Icon(Icons.settings),
-          //   title: const Text('Settings'),
-          //   onTap: () => Navigator.of(context).push(
-          //     MaterialPageRoute<void>(
-          //       builder: (BuildContext context) => const SettingsPage(),
-          //     ),
-          //   ),
-          // ),
           ListTile(
             leading: const Icon(Icons.feedback),
             title: const Text('Feedback'),
@@ -94,14 +74,21 @@ class AppDrawer extends StatelessWidget {
                 .read<AuthenticationBloc>()
                 .add(const AuthenticationSignOutPressed()),
           ),
+          const Divider(height: 16),
           BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (BuildContext context, AuthenticationState state) {
               const double progressIndicatorSize = 24.0;
               final AuthenticationStatus status = state.status;
               final bool isDeleting = status is DeletingAuthenticatedUserStatus;
               return ListTile(
-                leading: const Icon(Icons.delete_forever),
-                title: const Text('Delete Account'),
+                leading: Icon(
+                  Icons.delete_forever,
+                  color: theme.colorScheme.error,
+                ),
+                title: Text(
+                  'Delete Account',
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
                 trailing: isDeleting
                     ? const SizedBox(
                         width: progressIndicatorSize,
