@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
+import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:investtrack/res/constants/hero_tags.dart' as hero_tags;
 import 'package:investtrack/res/constants/types.dart' as types;
 import 'package:investtrack/router/slide_page_route.dart';
@@ -26,7 +27,6 @@ class InvestmentCard extends StatelessWidget {
     final int quantity = investment.quantity;
     final ThemeData themeData = Theme.of(context);
     final double? currentPrice = investment.currentPrice;
-    final String currency = investment.currency;
     final double? purchasePrice = investment.purchasePrice;
     final double? gainOrLoss = investment.gainOrLossUsd;
     final double totalValuePurchase = quantity * (purchasePrice ?? 0);
@@ -58,7 +58,12 @@ class InvestmentCard extends StatelessWidget {
                     tag: '${hero_tags.companyLogo}${investment.id}',
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(investment.companyLogoUrl),
+                      backgroundImage: investment.companyLogoUrl.isNotEmpty
+                          ? NetworkImage(investment.companyLogoUrl)
+                          : const AssetImage(
+                              '${constants.imagePath}'
+                              'company-logo-placeholder.jpeg',
+                            ),
                       radius: 24,
                     ),
                   ),
@@ -112,15 +117,14 @@ class InvestmentCard extends StatelessWidget {
               const Divider(height: 20),
               if (quantity > 0)
                 InvestmentDetail(
-                  label: 'Purchase Price',
-                  value: formatPrice(price: purchasePrice, currency: currency),
+                  label: 'Purchase Price (USD)',
+                  value: formatPrice(price: purchasePrice),
                   icon: Icons.money,
                 ),
               if (quantity > 0)
                 InvestmentDetail(
                   label: 'Gain/Loss (USD)',
-                  value:
-                      '${formatPrice(price: gainOrLoss, currency: currency)} '
+                  value: '${formatPrice(price: gainOrLoss)} '
                       '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
                   icon: gainOrLoss != null
                       ? gainOrLoss >= 0
@@ -134,8 +138,8 @@ class InvestmentCard extends StatelessWidget {
                       : Colors.grey,
                 ),
               InvestmentDetail(
-                label: 'Current Price',
-                value: formatPrice(price: currentPrice, currency: currency),
+                label: 'Current Price (USD)',
+                value: formatPrice(price: currentPrice),
                 icon: Icons.monetization_on,
               ),
               if (quantity > 0)
@@ -151,9 +155,9 @@ class InvestmentCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      purchaseDateTimestamp.isEmpty
-                          ? 'Not yet purchased.'
-                          : 'Purchased: $purchaseDateTimestamp',
+                      purchaseDateTimestamp.isNotEmpty && quantity > 0
+                          ? 'Purchased: $purchaseDateTimestamp'
+                          : 'Not yet purchased',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,

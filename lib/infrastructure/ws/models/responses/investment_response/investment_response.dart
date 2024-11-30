@@ -23,6 +23,9 @@ class InvestmentResponse extends Investment {
     required super.quantity,
     required super.isPurchased,
     required super.purchaseDate,
+    required super.currentPrice,
+    required super.gainOrLossUsd,
+    required super.purchasePrice,
   });
 
   factory InvestmentResponse.fromJson(Map<String, dynamic> json) =>
@@ -47,6 +50,9 @@ class InvestmentResponse extends Investment {
           'quantity: $quantity,'
           'isPurchased: $isPurchased,'
           'purchaseDate: $purchaseDate,'
+          'currentPrice: $currentPrice,'
+          'gainOrLossUsd: $gainOrLossUsd,'
+          'purchasePrice: $purchasePrice,'
           ')';
     } else {
       return super.toString();
@@ -68,6 +74,9 @@ class InvestmentResponse extends Investment {
       ticker.hashCode ^
       companyName.hashCode ^
       userId.hashCode ^
+      currentPrice.hashCode ^
+      purchasePrice.hashCode ^
+      gainOrLossUsd.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode;
 }

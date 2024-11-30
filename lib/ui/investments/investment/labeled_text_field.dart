@@ -8,6 +8,8 @@ class LabeledTextField extends StatelessWidget {
     this.hint,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    // Add customizable validator.
+    this.validator,
   });
 
   final TextEditingController controller;
@@ -15,6 +17,8 @@ class LabeledTextField extends StatelessWidget {
   final String? hint;
   final TextInputType keyboardType;
   final int maxLines;
+  // Allow passing a custom validator.
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,8 @@ class LabeledTextField extends StatelessWidget {
       ),
       keyboardType: keyboardType,
       maxLines: maxLines,
-      validator: (String? value) {
-        return value == null || value.isEmpty ? 'Please enter $label.' : null;
-      },
+      // Use the provided validator.
+      validator: validator,
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:investtrack/ui/investments/investment/add_edit_investment_page.d
 import 'package:investtrack/ui/investments/investment/info_row.dart';
 import 'package:investtrack/ui/investments/investment/markdown_widget.dart';
 import 'package:investtrack/ui/investments/investment/price_change_widget.dart';
+import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 import 'package:investtrack/utils/price_utils.dart';
 import 'package:models/models.dart';
 
@@ -69,6 +70,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
             state.exchangeRate != null) {
           final double purchasePrice = state.purchasePrice!;
           final double stateExchangeRate = state.exchangeRate!;
+
           totalValuePurchase = quantity * purchasePrice;
           currentPrice = state.currentPrice;
           totalValueCurrent = quantity * state.currentPrice;
@@ -88,7 +90,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
             : 0;
         final String currency = investment.currency;
         final bool isPurchased = investment.isPurchased;
-        return Scaffold(
+        return GradientBackgroundScaffold(
           appBar: AppBar(
             title: Text(
               investment.ticker,
@@ -114,7 +116,12 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
           body: FadeTransition(
             opacity: _fadeAnimation,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                top: 112,
+                right: 16,
+                bottom: 20,
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,10 +160,9 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
                       const CircularProgressIndicator()
                     else
                       InfoRow(
-                        label: 'Current Price',
+                        label: 'Current Price (USD)',
                         value: formatPrice(
                           price: currentPrice,
-                          currency: currency,
                         ),
                         icon: Icons.monetization_on,
                       ),
@@ -170,7 +176,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
                       const CircularProgressIndicator()
                     else if (isPurchased)
                       InfoRow(
-                        label: 'Total Value (Current)',
+                        label: 'Total Value (Current USD)',
                         value: totalValueCurrent.toStringAsFixed(2),
                         icon: Icons.attach_money,
                       ),
@@ -203,7 +209,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
                       const CircularProgressIndicator(),
                     if (isPurchased)
                       InfoRow(
-                        label: 'Total Value (Purchase)',
+                        label: 'Total Value (Purchase USD)',
                         value: totalValuePurchase.toStringAsFixed(2),
                         icon: Icons.money,
                       ),
@@ -215,10 +221,9 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
                       ),
                     if (state is InvestmentUpdated && isPurchased)
                       InfoRow(
-                        label: 'Gain/Loss',
+                        label: 'Gain/Loss (USD)',
                         value: '${formatPrice(
                           price: gainOrLoss,
-                          currency: currency,
                         )} '
                             '(${gainOrLossPercentage.toStringAsFixed(2)}%)',
                         icon: gainOrLoss >= 0

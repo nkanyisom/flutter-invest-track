@@ -6,6 +6,7 @@ import 'package:investtrack/res/constants/types.dart' as types;
 import 'package:investtrack/ui/investments/investment/date_picker.dart';
 import 'package:investtrack/ui/investments/investment/dropdown_field.dart';
 import 'package:investtrack/ui/investments/investment/labeled_text_field.dart';
+import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 import 'package:models/models.dart';
 
 class AddEditInvestmentPage extends StatefulWidget {
@@ -64,14 +65,19 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientBackgroundScaffold(
       appBar: AppBar(
         title: Text(
           widget.investment == null ? 'Add Investment' : 'Edit Investment',
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          top: 120,
+          right: 16,
+          bottom: 20,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
@@ -79,8 +85,14 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
             children: <Widget>[
               LabeledTextField(
                 controller: _tickerController,
-                label: 'Ticker Symbol',
+                label: 'Ticker Symbol (Stock name)',
                 hint: 'e.g. GOOG',
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a value.';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               LabeledTextField(
@@ -101,6 +113,9 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 items: types.investmentTypes,
                 onChanged: (String? value) =>
                     setState(() => _investmentType = value),
+                validator: (String? value) => value == null || value.isEmpty
+                    ? 'Please select Investment Type'
+                    : null,
               ),
               const SizedBox(height: 16),
               DropdownField(
@@ -125,6 +140,17 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 label: 'Quantity',
                 hint: 'e.g. 100',
                 keyboardType: TextInputType.number,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    // Allow empty input
+                    return null;
+                  }
+                  final int? number = int.tryParse(value);
+                  if (number == null || number < 0) {
+                    return 'Please enter a valid positive number.';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               ValueListenableBuilder<TextEditingValue>(
@@ -151,8 +177,8 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             _purchaseDate == null
-                                ? 'Please select a purchase date.'
-                                : 'Purchase date cannot be in the future.',
+                                ? 'Please select a purchase date'
+                                : 'Purchase date cannot be in the future',
                             style: const TextStyle(
                               color: Colors.red,
                               fontSize: 12,
@@ -169,6 +195,10 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 label: 'Description',
                 hint: 'Enter a description',
                 maxLines: 5,
+                validator: (_) {
+                  // Allow empty input.
+                  return null;
+                },
               ),
               const SizedBox(height: 32),
               Row(
@@ -204,11 +234,14 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                           InvestmentsState state,
                         ) {
                           if (state is InvestmentSubmitted) {
-                            context
-                                .read<InvestmentsBloc>()
-                                .add(LoadInvestment(state.investment));
+                            if (widget.investment != null) {
+                              context
+                                  .read<InvestmentsBloc>()
+                                  .add(LoadInvestment(state.investment));
+                            }
+
                             // Close the screen.
-                            Navigator.of(context).pop(state.investment);
+                            Navigator.of(context).pop(true);
                           } else if (state is InvestmentsError) {
                             // Show a snackbar with the error message.
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -308,7 +341,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
           stockExchange: _stockExchange ?? '',
           currency: _currency ?? '',
           quantity: int.tryParse(_quantityController.text) ?? 0,
-          purchaseDate: _purchaseDate!,
+          purchaseDate: _purchaseDate,
           description: _descriptionController.text,
         );
 

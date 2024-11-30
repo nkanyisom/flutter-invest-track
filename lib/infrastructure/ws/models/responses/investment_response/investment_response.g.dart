@@ -25,6 +25,9 @@ InvestmentResponse _$InvestmentResponseFromJson(Map<String, dynamic> json) =>
       purchaseDate: json['purchaseDate'] == null
           ? null
           : DateTime.parse(json['purchaseDate'] as String),
+      currentPrice: (json['currentPrice'] as num?)?.toDouble(),
+      gainOrLossUsd: (json['gainOrLossUsd'] as num?)?.toDouble(),
+      purchasePrice: (json['purchasePrice'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$InvestmentResponseToJson(InvestmentResponse instance) =>
@@ -42,6 +45,9 @@ Map<String, dynamic> _$InvestmentResponseToJson(InvestmentResponse instance) =>
       'companyLogoUrl': instance.companyLogoUrl,
       'purchaseDate': instance.purchaseDate?.toIso8601String(),
       'isPurchased': instance.isPurchased,
+      'purchasePrice': instance.purchasePrice,
+      'gainOrLossUsd': instance.gainOrLossUsd,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
+      'currentPrice': instance.currentPrice,
     };

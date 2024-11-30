@@ -7,12 +7,16 @@ class DropdownField extends StatelessWidget {
     required this.onChanged,
     super.key,
     this.value,
+    // Add customizable validator.
+    this.validator,
   });
 
   final String label;
   final List<String> items;
   final ValueChanged<String?> onChanged;
   final String? value;
+  // Allow passing a custom validator.
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +33,7 @@ class DropdownField extends StatelessWidget {
         );
       }).toList(),
       onChanged: onChanged,
-      validator: (String? value) =>
-          value == null || value.isEmpty ? 'Please select $label.' : null,
+      validator: validator,
     );
   }
 }

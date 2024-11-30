@@ -58,7 +58,7 @@ final class InvestmentsUpdated extends InvestmentsLoaded {
 final class CreatingInvestment extends InvestmentsLoaded {
   const CreatingInvestment({
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 }
@@ -78,7 +78,7 @@ final class UpdatingInvestment extends SubmittingInvestment {
   const UpdatingInvestment({
     required super.investmentId,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 }
@@ -197,7 +197,7 @@ final class InvestmentSubmitted extends InvestmentsLoaded {
   const InvestmentSubmitted({
     required this.investment,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 

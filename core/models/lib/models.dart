@@ -26,3 +26,4 @@ export 'src/password.dart';
 export 'src/rest_client.dart';
 export 'src/user.dart';
 export 'src/validation_error.dart';
+export 'src/invest_track_exception.dart';

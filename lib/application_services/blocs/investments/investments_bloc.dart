@@ -248,14 +248,11 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
     }
 
     if (investment.isPurchased) {
-      final String currency = investment.currency;
-
-      final double cadExchangeRate = currency == 'CAD'
-          ? 1
-          : await _exchangeRateRepository.getExchangeRate(
-              fromCurrency: investment.currency,
-              toCurrency: 'CAD',
-            );
+      final double cadExchangeRate =
+          await _exchangeRateRepository.getExchangeRate(
+        fromCurrency: 'USD',
+        toCurrency: 'CAD',
+      );
       if (state is InvestmentsLoaded) {
         emit(
           ExchangeRateLoaded(
@@ -333,37 +330,88 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
     );
     if (event is CreateInvestmentEvent) {
       if (state is InvestmentsLoaded) {
-        emitter(CreatingInvestment(investments: state.investments));
+        emitter(
+          CreatingInvestment(
+            investments: state.investments,
+            hasReachedMax: (state as InvestmentsLoaded).hasReachedMax,
+          ),
+        );
       }
 
       // Get the user ID from the authentication bloc.
       final String userId = _authenticationBloc.state.user.id;
       final Investment createdInvestment = event.investment;
-      // Create the new createdInvestment using the repository.
-      final Investment newInvestment = await _investmentsRepository.create(
-        Investment.create(
-          ticker: createdInvestment.ticker,
-          type: createdInvestment.type,
-          companyName: createdInvestment.companyName,
-          stockExchange: createdInvestment.stockExchange,
-          currency: createdInvestment.currency,
-          description: createdInvestment.description,
-          quantity: createdInvestment.quantity,
-          companyLogoUrl: createdInvestment.companyLogoUrl,
-          purchaseDate: createdInvestment.purchaseDate,
-          userId: userId,
-        ),
-      );
 
-      // Add the new createdInvestment to the existing list of investments.
-      investments.add(newInvestment);
-      // Emit the new state with the updated list of investments.
-      emitter(
-        InvestmentSubmitted(
-          investment: newInvestment,
-          investments: investments,
-        ),
+      final String ticker = createdInvestment.ticker;
+      final DateTime? purchaseDate = createdInvestment.purchaseDate;
+      final YahooFinanceResponse currentValue =
+          await const YahooFinanceDailyReader().getDailyDTOs(
+        ticker,
       );
+      final double currentPrice =
+          currentValue.candlesData.lastOrNull?.close ?? 0;
+      final int quantity = createdInvestment.quantity;
+      final double totalValueCurrent = quantity * currentPrice;
+      final YahooFinanceResponse dateValueResponse =
+          await const YahooFinanceDailyReader().getDailyDTOs(
+        ticker,
+        startDate: purchaseDate,
+      );
+      final double purchasePrice =
+          dateValueResponse.candlesData.firstOrNull?.close ?? 0;
+      final double totalValuePurchase = quantity * purchasePrice;
+      final double gainOrLoss = totalValueCurrent - totalValuePurchase;
+
+      try {
+        // Create the new createdInvestment using the repository.
+        final Investment newInvestment = await _investmentsRepository.create(
+          Investment.create(
+            ticker: ticker,
+            type: createdInvestment.type,
+            companyName: createdInvestment.companyName,
+            stockExchange: createdInvestment.stockExchange,
+            currency: createdInvestment.currency,
+            description: createdInvestment.description,
+            quantity: quantity,
+            companyLogoUrl: createdInvestment.companyLogoUrl,
+            purchaseDate: purchaseDate,
+            userId: userId,
+            currentPrice: currentPrice,
+            gainOrLossUsd: gainOrLoss,
+            totalValueOnPurchase: totalValuePurchase,
+            totalCurrentValue: totalValueCurrent,
+            purchasePrice: purchasePrice,
+          ),
+        );
+
+        // Add the new createdInvestment to the existing list of investments.
+        investments.add(newInvestment);
+
+        if (state is InvestmentsLoaded) {
+          // Emit the new state with the updated list of investments.
+          emitter(
+            InvestmentSubmitted(
+              investment: newInvestment,
+              investments: investments,
+              hasReachedMax: (state as InvestmentsLoaded).hasReachedMax,
+            ),
+          );
+        }
+      } on InvestTrackException catch (error, stackTrace) {
+        _handleError(
+          error: error,
+          stackTrace: stackTrace,
+          emitter: emitter,
+          investments: investments,
+        );
+      } catch (error, stackTrace) {
+        _handleError(
+          error: error,
+          stackTrace: stackTrace,
+          emitter: emitter,
+          investments: investments,
+        );
+      }
     } else if (event is UpdateInvestmentEvent) {
       final Investment investment = event.investment;
       if (state is InvestmentsLoaded) {
@@ -371,6 +419,7 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
           UpdatingInvestment(
             investmentId: investment.id,
             investments: state.investments,
+            hasReachedMax: (state as InvestmentsLoaded).hasReachedMax,
           ),
         );
       }
@@ -389,24 +438,29 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
         if (index != -1) {
           investments[index] = updatedInvestment;
         }
-
-        // Emit the new state with the updated list of investments.
-        emitter(
-          InvestmentSubmitted(
-            investment: updatedInvestment,
-            investments: investments,
-          ),
+        if (state is InvestmentsLoaded) {
+          // Emit the new state with the updated list of investments.
+          emitter(
+            InvestmentSubmitted(
+              investment: updatedInvestment,
+              investments: investments,
+              hasReachedMax: (state as InvestmentsLoaded).hasReachedMax,
+            ),
+          );
+        }
+      } on InvestTrackException catch (error, stackTrace) {
+        _handleError(
+          error: error,
+          stackTrace: stackTrace,
+          emitter: emitter,
+          investments: investments,
         );
       } catch (error, stackTrace) {
-        debugPrint(
-          'Error in $runtimeType: ${error.runtimeType}, $error,\n'
-          'stack trace: $stackTrace',
-        );
-        emitter(
-          InvestmentsError(
-            investments: investments,
-            error: '$error',
-          ),
+        _handleError(
+          error: error,
+          stackTrace: stackTrace,
+          emitter: emitter,
+          investments: investments,
         );
       }
     }
@@ -454,5 +508,24 @@ class InvestmentsBloc extends Bloc<InvestmentsEvent, InvestmentsState> {
         ),
       );
     }
+  }
+
+  void _handleError({
+    required Object error,
+    required StackTrace stackTrace,
+    required Emitter<InvestmentsState> emitter,
+    required List<Investment> investments,
+  }) {
+    debugPrint(
+      'Error while creating investment: '
+      '${error.runtimeType}, $error,\n'
+      'stack trace: $stackTrace',
+    );
+    emitter(
+      InvestmentsError(
+        investments: investments,
+        error: '$error',
+      ),
+    );
   }
 }

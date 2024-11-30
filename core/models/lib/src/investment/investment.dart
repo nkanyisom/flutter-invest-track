@@ -64,16 +64,16 @@ class Investment {
     required this.companyLogoUrl,
     required this.purchaseDate,
     required this.userId,
+    required this.currentPrice,
+    required this.gainOrLossUsd,
+    required this.totalValueOnPurchase,
+    required this.totalCurrentValue,
+    required this.purchasePrice,
   })  : id = 0,
         slug = null,
         isPurchased = quantity > 0,
-        totalValueOnPurchase = null,
-        purchasePrice = null,
-        totalCurrentValue = null,
         gainOrLossCad = null,
-        gainOrLossUsd = null,
         createdAt = null,
-        currentPrice = null,
         updatedAt = null;
 
   factory Investment.fromJson(Map<String, dynamic> json) =>
@@ -201,4 +201,31 @@ class Investment {
       gainOrLossUsd.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode;
+
+  @override
+  String toString() {
+    return 'Investment{'
+        'userId: $userId, '
+        'id: $id, '
+        'slug: $slug, '
+        'ticker: $ticker, '
+        'type: $type, '
+        'stockExchange: $stockExchange, '
+        'currency: $currency, '
+        'description: $description, '
+        'companyName: $companyName, '
+        'quantity: $quantity, '
+        'totalValueOnPurchase: $totalValueOnPurchase, '
+        'companyLogoUrl: $companyLogoUrl, '
+        'purchaseDate: $purchaseDate, '
+        'isPurchased: $isPurchased, '
+        'purchasePrice: $purchasePrice, '
+        'totalCurrentValue: $totalCurrentValue, '
+        'gainOrLossCad: $gainOrLossCad, '
+        'gainOrLossUsd: $gainOrLossUsd, '
+        'createdAt: $createdAt, '
+        'updatedAt: $updatedAt, '
+        'currentPrice: $currentPrice,'
+        '}';
+  }
 }

@@ -23,12 +23,43 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
   }
 
   @override
-  Future<Investment> create(Investment investment) {
-    return _restClient
-        .createInvestment(investment)
-        .then((InvestmentResult response) {
+  Future<Investment> create(Investment investment) async {
+    try {
+      final InvestmentResult response = await _restClient.createInvestment(
+        investment,
+      );
+
       return response.investment;
-    });
+    } catch (error) {
+      if (error is DioError) {
+        // Try to parse the error message from the response body.
+        final Object? responseData = error.response?.data;
+
+        if (responseData is String) {
+          // If the response is a raw JSON string, parse it
+          final Map<String, dynamic> parsedData = json.decode(responseData);
+          throw Exception(parsedData['error'] ?? 'Unknown error occurred');
+        } else if (responseData is Map<String, dynamic>) {
+          // Try to convert the responseData to InvestTrackError using fromJson.
+          try {
+            final InvestTrackError investTrackError = InvestTrackError.fromJson(
+              responseData,
+            );
+
+            throw InvestTrackException(investTrackError.error);
+          } catch (e) {
+            // Handle the case where the parsing fails.
+            debugPrint('Error parsing InvestTrackError: $e');
+          }
+
+          // If the response is already a parsed JSON object
+          throw Exception(responseData['error'] ?? 'Unknown error occurred');
+        }
+      }
+      // Re-throw the original error if it's not a DioError or has no response
+      // data.
+      rethrow;
+    }
   }
 
   @override
@@ -44,7 +75,7 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
       return response.investment;
     } catch (error) {
       if (error is DioError) {
-        // Try to parse the error message from the response body
+        // Try to parse the error message from the response body.
         final Object? responseData = error.response?.data;
 
         if (responseData is String) {
@@ -58,7 +89,7 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
               responseData,
             );
 
-            throw Exception(investTrackError.error);
+            throw InvestTrackException(investTrackError.error);
           } catch (e) {
             // Handle the case where the parsing fails
             debugPrint('Error parsing InvestTrackError: $e');

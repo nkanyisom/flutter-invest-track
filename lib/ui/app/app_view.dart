@@ -37,6 +37,10 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
+    // Assuming the primary color is dark blue and secondary is dark golden
+    const Color primaryBlue = Color(0xFF0D47A1);
+    const Color secondaryGold = Color(0xFFC79100);
+    const Color semiTransparentBlue = Color(0x660D47A1);
     return MaterialApp(
       title: constants.appName,
       initialRoute: AppRoute.signIn.path,
@@ -44,22 +48,155 @@ class _AppViewState extends State<AppView> {
       theme: _isDarkTheme
           ? ThemeData.dark().copyWith(
               colorScheme: const ColorScheme.dark(
-                primary: Color(0xFF2196F3), // A darker shade of blue
-                secondary: Color(0xFFFDD835), // A warm accent color
+                // Darker blue.
+                primary: primaryBlue,
+                // Dark golden.
+                secondary: secondaryGold,
+                // Typical dark mode background.
+                background: Color(0xFF121212),
+                // For cards and menus.
+                surface: Color(0xFF1E1E1E),
+                // Text/icon color on primary.
+                onPrimary: Colors.white,
+                // Text/icon color on secondary.
+                onSecondary: Colors.black,
+                // Text/icon color on background.
+                onBackground: Colors.white,
+                // Text/icon color on surfaces.
+                onSurface: Colors.white,
               ),
-              textTheme: TextTheme(
-                headlineLarge: const TextStyle(
+              textTheme: const TextTheme(
+                headlineLarge: TextStyle(
                   fontSize: 32.0,
                   fontWeight: FontWeight.bold,
+                  // Consistent with dark mode.
                   color: Colors.white,
                 ),
-                bodyLarge: TextStyle(fontSize: 16.0, color: Colors.grey[300]),
+                bodyLarge: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              progressIndicatorTheme: const ProgressIndicatorThemeData(
+                // Dark golden for the progress indicator.
+                color: secondaryGold,
+              ),
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    primaryBlue.withOpacity(0.8),
+                  ),
+                  // Set your preferred background color
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                  // Set your preferred text color
+                  elevation: MaterialStateProperty.all(5.0),
+                  // Optional: Add shadow effect
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 24.0,
+                    ),
+                  ),
+                  // Optional: Adjust button padding
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ), // Optional: Adjust button shape
+                ),
               ),
               buttonTheme: const ButtonThemeData(
-                buttonColor: Colors.teal,
+                textTheme: ButtonTextTheme.primary,
+              ),
+              appBarTheme: const AppBarTheme(
+                backgroundColor: semiTransparentBlue,
+                titleTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+              floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                // Background color
+                backgroundColor: Color(0xCC0D47A1),
+                // Icon or text color
+                foregroundColor: Colors.white,
+                // Elevation of the button
+                elevation: 6.0,
+              ),
+              cardColor: const Color(0xFF1E1E1E),
+              // For card-like widgets
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              // Dark background
+              dividerColor: Colors.grey.shade700,
+              // Subtle dividers
+              inputDecorationTheme: InputDecorationTheme(
+                labelStyle: const TextStyle(
+                  color: Color(0xFFB0BEC5), // Softer grey for readability.
+                ),
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                // Border color when the TextFormField is enabled (not focused).
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 1.5),
+                ),
+                // Border color when the TextFormField is focused.
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFFDD835), width: 2.0),
+                ),
+                // Border color when there is an error.
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2.0),
+                ),
+                focusedErrorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.redAccent, width: 2.0),
+                ),
+                errorStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             )
-          : ThemeData.light(),
+          : ThemeData.light().copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: Color(0xFF0D47A1),
+                // Same primary color for consistency
+                secondary: Color(0xFFC79100),
+                background: Colors.white,
+                surface: Colors.white,
+                onPrimary: Colors.white,
+                onSecondary: Colors.black,
+                onBackground: Colors.black,
+                onSurface: Colors.black,
+              ),
+              textTheme: const TextTheme(
+                headlineLarge: TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                bodyLarge: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black87,
+                ),
+              ),
+              buttonTheme: const ButtonThemeData(
+                buttonColor: Color(0xFF0D47A1), // Match primary color
+                textTheme: ButtonTextTheme.primary,
+              ),
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Color(0xFF0D47A1),
+                titleTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+              cardColor: Colors.white,
+              scaffoldBackgroundColor: Colors.white,
+              dividerColor: Colors.grey[300],
+            ),
       navigatorKey: _navigatorKey,
       builder: (BuildContext context, Widget? child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
