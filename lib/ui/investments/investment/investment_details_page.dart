@@ -161,9 +161,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
                     else
                       InfoRow(
                         label: 'Current Price (USD)',
-                        value: formatPrice(
-                          price: currentPrice,
-                        ),
+                        value: formatPrice(price: currentPrice),
                         icon: Icons.monetization_on,
                       ),
                     if (isPurchased)
