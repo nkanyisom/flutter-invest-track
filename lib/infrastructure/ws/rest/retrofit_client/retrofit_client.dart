@@ -124,7 +124,7 @@ abstract class RetrofitClient implements RestClient {
   @override
   @DELETE('delete-user')
   Future<DeleteAccountResponse> deleteAccount(
-    @Query('investmentId') String investmentId,
+    @Query('userId') String userId,
   );
 
   @override

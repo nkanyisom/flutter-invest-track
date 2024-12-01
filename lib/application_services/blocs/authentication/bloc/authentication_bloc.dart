@@ -99,6 +99,7 @@ class AuthenticationBloc
         await _authenticationRepository.deleteAccount(
       state.user.id,
     );
+
     emit(AuthenticationState.accountDeleted(response.message));
   }
 

@@ -51,6 +51,7 @@ abstract interface class RestClient {
   Future<Investments> getInvestments(String userId, int page, int itemsPerPage);
 
   Future<MessageResponse> deleteAccount(String userId);
+
   Future<ExchangeRate> getExchangeRate(String fromCurrency);
 
   Future<PriceChange> fetchPriceChange(String ticker);

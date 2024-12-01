@@ -393,9 +393,9 @@ class _RetrofitClient implements RetrofitClient {
   }
 
   @override
-  Future<DeleteAccountResponse> deleteAccount(String investmentId) async {
+  Future<DeleteAccountResponse> deleteAccount(String userId) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'investmentId': investmentId};
+    final queryParameters = <String, dynamic>{r'userId': userId};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<DeleteAccountResponse>(Options(

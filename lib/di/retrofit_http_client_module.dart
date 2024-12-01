@@ -6,6 +6,7 @@ import 'package:investtrack/res/constants/constants.dart' as constants;
 @module
 abstract class RetrofitHttpClientModule {
   @lazySingleton
-  RetrofitClient getRetrofitHttpClient(Dio dio) =>
-      RetrofitClient(dio, baseUrl: constants.baseUrl);
+  RetrofitClient getRetrofitHttpClient(Dio dio) {
+    return RetrofitClient(dio, baseUrl: constants.apiBaseUrl);
+  }
 }
