@@ -1,5 +1,6 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/flutter_lints)
+[![codecov](https://codecov.io/gh/Turskyi/flutter-invest-track/graph/badge.svg?token=MBRYB1UFQM)](https://codecov.io/gh/Turskyi/flutter-invest-track)
 
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/flutter-invest-track">
 
@@ -13,6 +14,12 @@ The app is primarily designed for Web, iOS, and Android, but it includes
 support for Linux, macOS, and Windows, with potential for future testing
 and official support on these platforms. Perfect for anyone looking to monitor
 their investments on the go.
+
+### Testing the App:
+
+Join our testing program and provide valuable feedback:
+
+- [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/052c3e006f2c8352)
 
 ## Features
 
