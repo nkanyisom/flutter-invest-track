@@ -181,7 +181,7 @@ class InvestmentCard extends StatelessWidget {
 
   void _navigateToInvestmentDetails(BuildContext context) {
     Navigator.of(context).push(
-      SlidePageRoute<Investment?>(
+      SlidePageRoute<bool?>(
         page: BlocProvider<InvestmentsBloc>.value(
           value: context.read<InvestmentsBloc>()
             ..add(LoadInvestment(investment)),

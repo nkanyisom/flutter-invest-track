@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
-import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/ui/investments/investment/investment_details_page.dart';
+import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 
 class InvestmentPage extends StatelessWidget {
   const InvestmentPage({super.key});
@@ -12,20 +12,19 @@ class InvestmentPage extends StatelessWidget {
     return BlocConsumer<InvestmentsBloc, InvestmentsState>(
       listener: (BuildContext context, InvestmentsState state) {
         if (state is InvestmentDeleted) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoute.investments.name,
-          );
+          Navigator.of(context).pop(true);
         }
       },
       builder: (BuildContext context, InvestmentsState state) {
         if (state is SelectedInvestmentState) {
           return InvestmentDetailsPage(investment: state.selectedInvestment);
-        } else if(state is InvestmentSubmitted){
+        } else if (state is InvestmentSubmitted) {
+          return InvestmentDetailsPage(investment: state.investment);
+        } else if (state is InvestmentDeleted) {
           return InvestmentDetailsPage(investment: state.investment);
         } else {
           // Fancy loading placeholder.
-          return const Scaffold(
+          return const GradientBackgroundScaffold(
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

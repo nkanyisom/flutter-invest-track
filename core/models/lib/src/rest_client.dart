@@ -46,7 +46,7 @@ abstract interface class RestClient {
 
   Future<InvestmentResult> updateInvestment(Investment investment);
 
-  Future<MessageResponse> deleteInvestment(int investmentId);
+  Future<MessageResponse> deleteInvestment(String userId, int investmentId);
 
   Future<Investments> getInvestments(String userId, int page, int itemsPerPage);
 

@@ -7,6 +7,7 @@ import 'package:investtrack/ui/investments/investment/add_edit_investment_page.d
 import 'package:investtrack/ui/investments/investment/info_row.dart';
 import 'package:investtrack/ui/investments/investment/markdown_widget.dart';
 import 'package:investtrack/ui/investments/investment/price_change_widget.dart';
+import 'package:investtrack/ui/widgets/blurred_app_bar.dart';
 import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 import 'package:investtrack/utils/price_utils.dart';
 import 'package:models/models.dart';
@@ -46,7 +47,23 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<InvestmentsBloc, InvestmentsState>(
+    return BlocConsumer<InvestmentsBloc, InvestmentsState>(
+      listener: (
+        BuildContext context,
+        InvestmentsState state,
+      ) {
+        if (state is InvestmentsError) {
+          // Show a snackbar with the error message.
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is InvestmentDeleted) {
+          Navigator.of(context).pop(true);
+        }
+      },
       builder: (BuildContext context, InvestmentsState state) {
         final Investment investment = widget.investment;
         final int quantity = investment.quantity;
@@ -91,7 +108,7 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
         final String currency = investment.currency;
         final bool isPurchased = investment.isPurchased;
         return GradientBackgroundScaffold(
-          appBar: AppBar(
+          appBar: BlurredAppBar(
             title: Text(
               investment.ticker,
               style: TextStyle(
@@ -100,11 +117,13 @@ class _InvestmentDetailsPageState extends State<InvestmentDetailsPage>
               ),
             ),
             actions: <Widget>[
-              if (state is ValueLoadingState) const CircularProgressIndicator(),
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () => _editInvestment(investment),
-              ),
+              if (state is ValueLoadingState)
+                const CircularProgressIndicator()
+              else
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _editInvestment(investment),
+                ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: state is InvestmentDeleting

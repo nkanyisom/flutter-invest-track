@@ -16,6 +16,8 @@ import 'package:investtrack/ui/investments/investment/add_edit_investment_page.d
 import 'package:investtrack/ui/investments/investment_tile/investment_tile.dart';
 import 'package:investtrack/ui/investments/investment_tile/shimmer_investment.dart';
 import 'package:investtrack/ui/menu/app_drawer.dart';
+import 'package:investtrack/ui/widgets/blurred_app_bar.dart';
+import 'package:investtrack/ui/widgets/blurred_floating_action_button.dart';
 import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
 import 'package:models/models.dart';
 
@@ -69,7 +71,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
   @override
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
-      appBar: AppBar(
+      appBar: BlurredAppBar(
         title: Row(
           children: <Widget>[
             Hero(
@@ -99,6 +101,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
         listener: _handleInvestmentsState,
         builder: (BuildContext context, InvestmentsState state) {
           if (state is InvestmentsLoading) {
+            //TODO: replace with shimmer.
             return const Center(child: CircularProgressIndicator());
           } else if (state is InvestmentsError) {
             return Center(child: Text('Error: ${state.error}'));
@@ -216,10 +219,10 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: BlurredFabWithBorder(
         onPressed: _navigateToAddEditPage,
-        tooltip: 'Add Investment.',
-        child: const Icon(Icons.add, color: Colors.white),
+        tooltip: 'Add Investment',
+        icon: Icons.add,
       ),
     );
   }
@@ -227,7 +230,6 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
   @override
   void dispose() {
     _feedbackController?.removeListener(_onFeedbackChanged);
-    _feedbackController?.dispose();
     _feedbackController = null;
     super.dispose();
   }
@@ -239,6 +241,7 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
           .add(const AuthenticationSignOutPressed());
     } else if (state is InvestmentDeleted) {
       final String message = state.message;
+
       Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,

@@ -89,6 +89,11 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i651.RetrofitClient>(),
               gh<_i460.SharedPreferences>(),
             ));
+    gh.factory<_i305.InvestmentsRepository>(
+        () => _i233.InvestmentsRepositoryImpl(
+              gh<_i669.RestClient>(),
+              gh<_i460.SharedPreferences>(),
+            ));
     gh.factory<_i113.SettingsRepository>(
         () => _i803.SettingsRepositoryImpl(gh<_i460.SharedPreferences>()));
     gh.factory<_i682.MenuBloc>(
@@ -101,8 +106,6 @@ extension GetItInjectableX on _i174.GetIt {
         authenticationRepository: gh<_i223.AuthenticationRepository>()));
     gh.factory<_i445.SignUpBloc>(() => _i445.SignUpBloc(
         authenticationRepository: gh<_i223.AuthenticationRepository>()));
-    gh.factory<_i305.InvestmentsRepository>(
-        () => _i233.InvestmentsRepositoryImpl(gh<_i669.RestClient>()));
     gh.factory<_i91.InvestmentsBloc>(() => _i91.InvestmentsBloc(
           gh<_i305.InvestmentsRepository>(),
           gh<_i30.ExchangeRateRepository>(),

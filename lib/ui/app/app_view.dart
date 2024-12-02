@@ -5,10 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:investtrack/application_services/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:investtrack/router/app_route.dart';
-import 'package:investtrack/router/routes.dart' as routes;
 import 'package:investtrack/ui/investments/investments_page.dart';
+import 'package:investtrack/ui/not_found_page.dart';
 import 'package:investtrack/ui/sign_in/sign_in_page.dart';
-import 'package:investtrack/ui/splash_page.dart';
 
 /// [AppView] is a [StatefulWidget] because it maintains a [GlobalKey] which is
 /// used to access the [NavigatorState]. By default, [AppView] will render the
@@ -20,9 +19,14 @@ import 'package:investtrack/ui/splash_page.dart';
 /// button to sign out.
 @immutable
 class AppView extends StatefulWidget {
-  const AppView({required this.authenticationBloc, super.key});
+  const AppView({
+    required this.routeMap,
+    required this.authenticationBloc,
+    super.key,
+  });
 
   final AuthenticationBloc authenticationBloc;
+  final Map<String, WidgetBuilder> routeMap;
 
   @override
   State<AppView> createState() => _AppViewState();
@@ -37,14 +41,36 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    // Assuming the primary color is dark blue and secondary is dark golden
+    // The primary color is dark blue and secondary is dark golden.
     const Color primaryBlue = Color(0xFF0D47A1);
     const Color secondaryGold = Color(0xFFC79100);
-    const Color semiTransparentBlue = Color(0x660D47A1);
     return MaterialApp(
       title: constants.appName,
       initialRoute: AppRoute.signIn.path,
-      routes: routes.routeMap,
+      routes: widget.routeMap,
+      onGenerateRoute: (RouteSettings settings) {
+        final String routeName = settings.name ?? '';
+
+        // Append slash if missing.
+        final String normalizedRouteName =
+            routeName.startsWith('/') ? routeName : '/$routeName';
+
+        // Handle routes not covered in routeMap
+        if (widget.routeMap.containsKey(normalizedRouteName)) {
+          // Safely retrieve the widget builder from the route map.
+          final WidgetBuilder? widgetBuilder =
+              widget.routeMap[normalizedRouteName];
+
+          if (widgetBuilder != null) {
+            return MaterialPageRoute<void>(
+              builder: (BuildContext context) => widgetBuilder(context),
+            );
+          }
+        }
+
+        // Fallback for unknown routes
+        return MaterialPageRoute<void>(builder: (_) => const NotFoundPage());
+      },
       theme: _isDarkTheme
           ? ThemeData.dark().copyWith(
               colorScheme: const ColorScheme.dark(
@@ -107,28 +133,32 @@ class _AppViewState extends State<AppView> {
                   backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.disabled)) {
-                        return Colors.grey
-                            .withOpacity(0.3); // Your disabled color
+                        // Disabled button background color.
+                        return primaryBlue.withOpacity(0.3);
                       }
-                      return primaryBlue
-                          .withOpacity(0.8); // Default background color
+                      // Default background color.
+                      return primaryBlue.withOpacity(0.8);
                     },
                   ),
                   foregroundColor: MaterialStateProperty.resolveWith<Color?>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.disabled)) {
-                        return Colors
-                            .grey.shade600; // Text color for disabled state
+                        // Disabled text color (lighter grey for better
+                        // visibility)
+                        return Colors.grey.shade400;
                       }
-                      return Colors.white; // Default text color
+                      // Default text color for dark mode.
+                      return Colors.white;
                     },
                   ),
                   elevation: MaterialStateProperty.resolveWith<double>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.disabled)) {
-                        return 0.0; // No elevation when disabled
+                        // No elevation when disabled.
+                        return 0.0;
                       }
-                      return 5.0; // Default elevation
+                      // Default elevation.
+                      return 5.0;
                     },
                   ),
                   padding: MaterialStateProperty.all(
@@ -148,7 +178,8 @@ class _AppViewState extends State<AppView> {
                 textTheme: ButtonTextTheme.primary,
               ),
               appBarTheme: const AppBarTheme(
-                backgroundColor: semiTransparentBlue,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
                 titleTextStyle: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
@@ -157,12 +188,8 @@ class _AppViewState extends State<AppView> {
                 iconTheme: IconThemeData(color: Colors.white),
               ),
               floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                // Background color
-                backgroundColor: Color(0xCC0D47A1),
-                // Icon or text color
-                foregroundColor: Colors.white,
-                // Elevation of the button
-                elevation: 6.0,
+                // Background color with 50% transparency leve (Alpha Value: 80)
+                backgroundColor: Color(0x80FFFFFF),
               ),
               cardColor: const Color(0xFF1E1E1E),
               // For card-like widgets
@@ -190,11 +217,14 @@ class _AppViewState extends State<AppView> {
                 focusedErrorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.redAccent, width: 2.0),
                 ),
-                errorStyle: const TextStyle(
-                  color: Colors.white,
+                errorStyle: TextStyle(
+                  color: Colors.red.shade100,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
+                // Allow the error message to wrap to multiple lines.
+                // or any other number of lines you prefer
+                errorMaxLines: 3,
               ),
             )
           : ThemeData.light().copyWith(
@@ -242,6 +272,7 @@ class _AppViewState extends State<AppView> {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             final AuthenticationStatus status = state.status;
+
             switch (status) {
               case DeletingAuthenticatedUserStatus():
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -276,7 +307,6 @@ class _AppViewState extends State<AppView> {
           child: child,
         );
       },
-      onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }

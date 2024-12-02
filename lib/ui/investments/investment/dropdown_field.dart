@@ -15,6 +15,7 @@ class DropdownField extends StatelessWidget {
   final List<String> items;
   final ValueChanged<String?> onChanged;
   final String? value;
+
   // Allow passing a custom validator.
   final String? Function(String?)? validator;
 
@@ -25,7 +26,7 @@ class DropdownField extends StatelessWidget {
         labelText: label,
         border: const OutlineInputBorder(),
       ),
-      value: value,
+      value: value?.isEmpty == true ? null : value,
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,

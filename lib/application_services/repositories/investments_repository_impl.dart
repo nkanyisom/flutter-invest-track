@@ -6,12 +6,14 @@ import 'package:injectable/injectable.dart';
 import 'package:investtrack/domain_services/investments_repository.dart';
 import 'package:investtrack/res/constants/constants.dart' as constants;
 import 'package:models/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @Injectable(as: InvestmentsRepository)
 class InvestmentsRepositoryImpl implements InvestmentsRepository {
-  const InvestmentsRepositoryImpl(this._restClient);
+  const InvestmentsRepositoryImpl(this._restClient, this._preferences);
 
   final RestClient _restClient;
+  final SharedPreferences _preferences;
 
   @override
   Future<Investments> getInvestments({
@@ -63,8 +65,19 @@ class InvestmentsRepositoryImpl implements InvestmentsRepository {
   }
 
   @override
-  Future<MessageResponse> delete(Investment investment) =>
-      _restClient.deleteInvestment(investment.id);
+  Future<MessageResponse> delete(Investment investment) {
+    final String userId = _preferences.getString(StorageKeys.userId.key) ?? '';
+    if (userId.isNotEmpty || userId == investment.userId) {
+      return _restClient.deleteInvestment(
+        userId,
+        investment.id,
+      );
+    } else {
+      throw const InvestTrackException(
+        'You do not have permission to delete this investment.',
+      );
+    }
+  }
 
   @override
   Future<Investment> update(Investment investment) async {

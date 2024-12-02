@@ -17,3 +17,5 @@ const int itemsPerPage = 6;
 // Represents the offset to determine the next page.
 const int pageOffset = 1;
 const String imagePath = 'assets/images/';
+/// Blur intensity constant.
+const double blurSigma = 3.0;

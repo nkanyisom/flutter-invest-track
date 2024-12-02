@@ -87,20 +87,22 @@ final class InvestmentDeleting extends SubmittingInvestment {
   const InvestmentDeleting({
     required super.investmentId,
     required super.investments,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 }
 
 final class InvestmentDeleted extends InvestmentsLoaded {
   const InvestmentDeleted({
+    required this.investment,
     required super.investments,
     required this.message,
-    super.hasReachedMax = false,
+    required super.hasReachedMax,
     super.isLoadingMore = false,
   });
 
   final String message;
+  final Investment investment;
 }
 
 final class SelectedInvestmentState extends InvestmentsLoaded {
@@ -202,4 +204,17 @@ final class InvestmentSubmitted extends InvestmentsLoaded {
   });
 
   final Investment investment;
+}
+
+final class InvestmentError extends InvestmentsLoaded {
+  const InvestmentError({
+    required this.errorMessage,
+    required this.investment,
+    required super.investments,
+    required super.hasReachedMax,
+    super.isLoadingMore = false,
+  });
+
+  final Investment investment;
+  final String errorMessage;
 }

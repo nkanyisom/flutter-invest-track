@@ -25,6 +25,7 @@ import 'package:user_repository/user_repository.dart';
 /// from https://bloclibrary.dev/tutorials/flutter-login/.
 class App extends StatefulWidget {
   const App({
+    required this.routeMap,
     required this.authenticationRepository,
     required this.authenticationBloc,
     required this.menuBloc,
@@ -34,6 +35,7 @@ class App extends StatefulWidget {
   final AuthenticationRepository authenticationRepository;
   final AuthenticationBloc authenticationBloc;
   final MenuBloc menuBloc;
+  final Map<String, WidgetBuilder> routeMap;
 
   @override
   State<App> createState() => _AppState();
@@ -63,7 +65,10 @@ class _AppState extends State<App> {
             },
           ),
         ],
-        child: AppView(authenticationBloc: widget.authenticationBloc),
+        child: AppView(
+          routeMap: widget.routeMap,
+          authenticationBloc: widget.authenticationBloc,
+        ),
       ),
     );
   }

@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:investtrack/application_services/blocs/investments/investments_bloc.dart';
 import 'package:investtrack/res/constants/currency_list.dart' as list;
 import 'package:investtrack/res/constants/types.dart' as types;
+import 'package:investtrack/router/app_route.dart';
 import 'package:investtrack/ui/investments/investment/date_picker.dart';
 import 'package:investtrack/ui/investments/investment/dropdown_field.dart';
-import 'package:investtrack/ui/widgets/labeled_text_field.dart';
+import 'package:investtrack/ui/widgets/blurred_app_bar.dart';
 import 'package:investtrack/ui/widgets/gradient_background_scaffold.dart';
+import 'package:investtrack/ui/widgets/labeled_text_field.dart';
 import 'package:models/models.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddEditInvestmentPage extends StatefulWidget {
   const AddEditInvestmentPage({super.key, this.investment});
@@ -66,7 +69,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
   @override
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
-      appBar: AppBar(
+      appBar: BlurredAppBar(
         title: Text(
           widget.investment == null ? 'Add Investment' : 'Edit Investment',
         ),
@@ -99,12 +102,16 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                 controller: _companyNameController,
                 label: 'Company Name',
                 hint: 'e.g. Alphabet Inc Class C',
+                validator: (String? value) => value == null || value.isEmpty
+                    ? 'Please enter company name'
+                    : null,
               ),
               const SizedBox(height: 16),
               LabeledTextField(
                 controller: _companyLogoUrlController,
                 label: 'Company Logo URL',
                 hint: 'Enter direct image URL.',
+                validator: _validateImageUrl,
               ),
               const SizedBox(height: 16),
               DropdownField(
@@ -250,8 +257,84 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
                                 backgroundColor: Colors.red,
                               ),
                             );
+                          } else if (state is InvestmentError) {
+                            final String errorMessage = state.errorMessage;
+
+                            // Check if the error message indicates an invalid
+                            // ticker.
+                            if (errorMessage.contains(
+                                  'Unable to fetch historical data',
+                                ) &&
+                                errorMessage.contains('ticker:')) {
+                              // Show a modal dialog instead of a snackbar.
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Invalid Ticker'),
+                                    content: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const Text(
+                                          'It looks like the input you entered '
+                                          'is invalid. The issue could be with '
+                                          'the ticker or the date.',
+                                        ),
+                                        const SizedBox(height: 8),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            const String url =
+                                                'https://finance.yahoo.com/markets/stocks';
+                                            if (await canLaunch(url)) {
+                                              await launch(url);
+                                            } else {
+                                              throw 'Could not launch $url';
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Find valid tickers here',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          'Please note: This link will open a '
+                                          'browser and is not part of the app.',
+                                        ),
+                                      ],
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              // Otherwise, show the error message as a snackbar
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(errorMessage),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 4),
+                                ),
+                              );
+                            }
                           } else if (state is InvestmentDeleted) {
-                            Navigator.of(context).pop(true);
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoute.investments.path,
+                            );
                           }
                         },
                         builder: (_, InvestmentsState state) {
@@ -272,6 +355,7 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
 
                           final bool isFormValid = tickerValue.isNotEmpty &&
                               (!isQuantityValid || isPurchaseDateValid);
+
                           return ElevatedButton(
                             onPressed:
                                 (isSubmitting || !isFormValid) ? null : _submit,
@@ -365,5 +449,25 @@ class _AddEditInvestmentPageState extends State<AddEditInvestmentPage> {
     final Investment? investment = widget.investment;
     if (investment == null) return;
     context.read<InvestmentsBloc>().add(DeleteInvestmentEvent(investment));
+  }
+
+  String? _validateImageUrl(String? value) {
+    // Check if the value is null or empty (optional).
+    if (value == null || value.isEmpty) {
+      // Allow empty input.
+      return null;
+    }
+
+    // Regular expression to match valid image URLs.
+    final String validUrlPattern = r'^(https://).*\.(png|jpe?g|webp)$';
+    final RegExp regExp = RegExp(validUrlPattern, caseSensitive: false);
+
+    if (!regExp.hasMatch(value)) {
+      return 'Please enter a valid image URL ending with one of the following '
+          'extensions: .png, .jpg, .jpeg, .webp. You can also leave this field '
+          'empty if no image is provided.';
+    }
+// URL is valid.
+    return null;
   }
 }

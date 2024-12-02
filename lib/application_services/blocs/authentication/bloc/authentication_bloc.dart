@@ -61,29 +61,30 @@ class AuthenticationBloc
   Future<void> _onSubscriptionRequested(
     AuthenticationSubscriptionRequested event,
     Emitter<AuthenticationState> emit,
-  ) =>
-      emit.onEach(
-        _authenticationRepository.status,
-        onData: (AuthenticationStatus status) async {
-          switch (status) {
-            case UnauthenticatedStatus():
-              return emit(const AuthenticationState.unauthenticated());
-            case AuthenticatedStatus():
-              final User user = _getUser();
+  ) {
+    return emit.onEach(
+      _authenticationRepository.status,
+      onData: (AuthenticationStatus status) async {
+        switch (status) {
+          case UnauthenticatedStatus():
+            return emit(const AuthenticationState.unauthenticated());
+          case AuthenticatedStatus():
+            final User user = _getUser();
 
-              return emit(
-                user.isNotEmpty
-                    ? AuthenticationState.authenticated(user)
-                    : const AuthenticationState.unauthenticated(),
-              );
-            case UnknownAuthenticationStatus():
-              return emit(const AuthenticationState.unknown());
-            case DeletingAuthenticatedUserStatus():
-              emit(AuthenticationState.accountDeleting(state.user));
-          }
-        },
-        onError: addError,
-      );
+            return emit(
+              user.isNotEmpty
+                  ? AuthenticationState.authenticated(user)
+                  : const AuthenticationState.unauthenticated(),
+            );
+          case UnknownAuthenticationStatus():
+            return emit(const AuthenticationState.unknown());
+          case DeletingAuthenticatedUserStatus():
+            emit(AuthenticationState.accountDeleting(state.user));
+        }
+      },
+      onError: addError,
+    );
+  }
 
   void _onLogoutPressed(
     AuthenticationSignOutPressed event,
@@ -103,8 +104,5 @@ class AuthenticationBloc
     emit(AuthenticationState.accountDeleted(response.message));
   }
 
-  User _getUser() {
-    final User user = _userRepository.getUser();
-    return user;
-  }
+  User _getUser() => _userRepository.getUser();
 }
