@@ -109,7 +109,6 @@ class _AppViewState extends State<AppView> {
                 bodyMedium: const TextStyle(
                   fontSize: 14.0,
                   fontFamily: 'OpenSans',
-                  color: Colors.grey, // Semi-light gray for dark mode
                 ),
                 headlineSmall: const TextStyle(
                   fontSize: 24.0,

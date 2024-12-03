@@ -21,7 +21,7 @@ class PriceChangeWidget extends StatelessWidget {
           label: 'Price Change',
           value: formatPrice(price: priceChange),
           icon: priceChange >= 0 ? Icons.trending_up : Icons.trending_down,
-          valueColor: priceChange >= 0 ? Colors.green : Colors.red,
+          valueColor: priceChange >= 0 ? Colors.greenAccent : Colors.red,
         ),
         InfoRow(
           label: 'Change %',
@@ -29,7 +29,7 @@ class PriceChangeWidget extends StatelessWidget {
               ? 'Loading...'
               : '${changePercentage.toStringAsFixed(2)}%',
           icon: changePercentage >= 0 ? Icons.trending_up : Icons.trending_down,
-          valueColor: changePercentage >= 0 ? Colors.green : Colors.red,
+          valueColor: changePercentage >= 0 ? Colors.greenAccent : Colors.red,
         ),
       ],
     );

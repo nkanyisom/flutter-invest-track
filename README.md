@@ -411,6 +411,17 @@ more expression and flexibility.
 
 For any inquiries, please contact support@turskyi.com.
 
+## Screenshots:
+
+<!--suppress CheckImageSize -->
+<img src="screenshots/login_20241202_223414.png" width="400"  alt="screenshot">
+<!--suppress CheckImageSize -->
+<img src="screenshots/details_20241202_224900.png" width="400"  alt="screenshot">
+<!--suppress CheckImageSize -->
+<img src="screenshots/Investments_20241202_223809.png" width="400"  alt="screenshot">
+<!--suppress CheckImageSize -->
+<img src="screenshots/edit_20241202_224929.png" width="400"  alt="screenshot">
+
 # Acknowledgments
 
 - Flutter documentation: https://flutter.dev/docs
