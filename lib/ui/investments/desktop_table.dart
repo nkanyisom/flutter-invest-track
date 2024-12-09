@@ -59,7 +59,8 @@ class DesktopTable extends StatelessWidget {
               ),
               const DataCell(
                 Text(
-                    'TODO: dynamically calculate the "totalValueOnPurchaseCAD"'),
+                  'TODO: dynamically calculate the "totalValueOnPurchaseCAD"',
+                ),
               ),
               DataCell(Text(investment.purchasePrice?.toString() ?? 'N/A')),
               DataCell(Text(investment.gainOrLossUsd?.toString() ?? 'N/A')),
