@@ -96,25 +96,28 @@ class _AppViewState extends State<AppView> {
                   fontSize: 32.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontFamily: 'Roboto', // Use your desired font
+                  fontFamily: 'Roboto',
                 ),
                 bodyLarge: TextStyle(
                   fontSize: 16.0,
                   // Use your desired font.
                   fontFamily: 'OpenSans',
-                  // Adjust color for readability in dark mode
+                  // Adjust color for readability in dark mode.
+                  color: Colors.white,
+                ),
+                bodyMedium: TextStyle(
+                  fontSize: 14.0,
+                  fontFamily: 'OpenSans',
+                  // Adjust color for readability in dark mode.
                   color: Colors.white,
                 ),
               ).copyWith(
-                bodyMedium: const TextStyle(
-                  fontSize: 14.0,
-                  fontFamily: 'OpenSans',
-                ),
                 headlineSmall: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Roboto',
-                  color: Colors.white70, // Softer white
+                  // Softer white.
+                  color: Colors.white70,
                 ),
                 titleMedium: const TextStyle(
                   fontSize: 18.0,

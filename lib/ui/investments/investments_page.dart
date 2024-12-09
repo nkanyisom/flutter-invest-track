@@ -181,36 +181,34 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
                         const LoadInvestments(),
                       );
                 },
-                child: MediaQuery.sizeOf(context).width > 600
-                    ? _buildDesktopTable(allInvestments)
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(
-                          16.0,
-                          112,
-                          16,
-                          80,
+                child: ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(
+                    16.0,
+                    112,
+                    16,
+                    80,
+                  ),
+                  itemCount: state is CreatingInvestment
+                      ? allInvestments.length + 1
+                      : allInvestments.length +
+                          // Add extra item for loader.
+                          (state.hasReachedMax ? 0 : 1),
+                  itemBuilder: (_, int index) {
+                    if (state is CreatingInvestment &&
+                        index == allInvestments.length) {
+                      return const ShimmerInvestment();
+                    } else if (index == allInvestments.length) {
+                      return const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
-                        itemCount: state is CreatingInvestment
-                            ? allInvestments.length + 1
-                            : allInvestments.length +
-                                // Add extra item for loader.
-                                (state.hasReachedMax ? 0 : 1),
-                        itemBuilder: (_, int index) {
-                          if (state is CreatingInvestment &&
-                              index == allInvestments.length) {
-                            return const ShimmerInvestment();
-                          } else if (index == allInvestments.length) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
-                          final Investment investment = allInvestments[index];
-                          return InvestmentTile(investment: investment);
-                        },
-                      ),
+                      );
+                    }
+                    final Investment investment = allInvestments[index];
+                    return InvestmentTile(investment: investment);
+                  },
+                ),
               ),
             );
           } else {
@@ -250,61 +248,6 @@ class _InvestmentsPageState extends State<InvestmentsPage> {
         fontSize: 16.0,
       );
     }
-  }
-
-  Widget _buildDesktopTable(List<Investment> investments) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(label: Text('Company')),
-        DataColumn(label: Text('Stock Exchange')),
-        DataColumn(label: Text('Ticker')),
-        DataColumn(label: Text('Current Price')),
-        DataColumn(label: Text('Currency')),
-        DataColumn(label: Text('Price Change')),
-        DataColumn(label: Text('% Change')),
-        DataColumn(label: Text('Quantity')),
-        DataColumn(label: Text('Total Current Value \$')),
-        DataColumn(label: Text('Total Value Current CAD')),
-        DataColumn(label: Text('Total Value on Purchase Date \$')),
-        DataColumn(label: Text('Total Value on Purchase Date CAD')),
-        DataColumn(label: Text('Price on Purchase Date')),
-        DataColumn(label: Text('Gain or Loss for Stock \$')),
-        DataColumn(label: Text('Gain or Loss for Stock in CAD')),
-      ],
-      rows: investments.map((Investment investment) {
-        return DataRow(
-          cells: <DataCell>[
-            DataCell(Text(investment.companyName)),
-            DataCell(Text(investment.stockExchange)),
-            DataCell(Text(investment.ticker)),
-            const DataCell(
-              Text('TODO: dynamically calculate the "currentPrice"'),
-            ),
-            DataCell(Text(investment.currency)),
-            const DataCell(
-              Text('TODO: dynamically calculate the "priceChange"'),
-            ),
-            const DataCell(
-              Text('TODO: dynamically calculate the "percentChange"'),
-            ),
-            DataCell(Text(investment.quantity.toString())),
-            DataCell(Text(investment.totalCurrentValue?.toString() ?? 'N/A')),
-            const DataCell(
-              Text('TODO: dynamically calculate the "totalValueCurrentCAD"'),
-            ),
-            DataCell(
-              Text(investment.totalValueOnPurchase?.toString() ?? 'N/A'),
-            ),
-            const DataCell(
-              Text('TODO: dynamically calculate the "totalValueOnPurchaseCAD"'),
-            ),
-            DataCell(Text(investment.purchasePrice?.toString() ?? 'N/A')),
-            DataCell(Text(investment.gainOrLossUsd?.toString() ?? 'N/A')),
-            DataCell(Text(investment.gainOrLossCad?.toString() ?? 'N/A')),
-          ],
-        );
-      }).toList(),
-    );
   }
 
   void _showFeedbackUi() {

@@ -430,3 +430,9 @@ For any inquiries, please contact support@turskyi.com.
   original Google Sheet that served as the foundation for this project.
 - All contributors and community members who helped build this project.
 
+## Download
+
+<a href="https://play.google.com/store/apps/details?id=com.turskyi.investtrack" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240  alt="google play badge"/>
+</a>
+
