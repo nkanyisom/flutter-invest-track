@@ -58,7 +58,7 @@ local machine for development and testing purposes.
 - Clone the repository:
 
 ```bash
-git clone [https://github.com/nkanyisom/flutter-invest-track.git](https://github.com/nkanyisom/flutter-invest-track.git)
+git clone https://github.com/nkanyisom/flutter-invest-track.git
 ```
 
 - Navigate to the project directory:
