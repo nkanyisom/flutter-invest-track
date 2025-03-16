@@ -1,4 +1,3 @@
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/flutter_lints)
 [![codecov](https://codecov.io/gh/Turskyi/flutter-invest-track/graph/badge.svg?token=MBRYB1UFQM)](https://codecov.io/gh/Turskyi/flutter-invest-track)
 [![Code Quality](https://github.com/Turskyi/flutter-invest-track/actions/workflows/code_quality_tests.yml/badge.svg)](https://github.com/Turskyi/flutter-invest-track/actions/workflows/code_quality_tests.yml)
@@ -59,7 +58,7 @@ local machine for development and testing purposes.
 - Clone the repository:
 
 ```bash
-git clone https://github.com/Turskyi/flutter-invest-track.git
+git clone [https://github.com/nkanyisom/flutter-invest-track.git](https://github.com/nkanyisom/flutter-invest-track.git)
 ```
 
 - Navigate to the project directory:
